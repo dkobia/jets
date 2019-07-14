@@ -32,6 +32,8 @@ module Jets
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
       options[:path] = add_namespace(options[:path])
+
+      HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
     end
 
@@ -85,6 +87,7 @@ module Jets
     def root(to, options={})
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
+      puts "root 1"
       @routes << Route.new(options)
     end
 
