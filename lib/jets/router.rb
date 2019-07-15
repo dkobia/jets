@@ -87,7 +87,7 @@ module Jets
     def root(to, options={})
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
-      puts "root 1"
+      # TODO: define root_url helper
       @routes << Route.new(options)
     end
 

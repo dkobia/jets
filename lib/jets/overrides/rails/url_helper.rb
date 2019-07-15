@@ -11,15 +11,25 @@ module Jets::UrlHelper
             options
           when :back
             _back_url
-          # TODO: hook this up to Jets implmentation of config/routes.rb
-          # when ActiveRecord::Base
-          #   record = options
-          #   record.id
+          when ActiveRecord::Base
+            _handle_model(options)
           else
             raise ArgumentError, "Please provided a String to link_to as the the second argument. The Jets link_to helper takes as the second argument."
           end
 
     add_stage_name(url)
   end
+
+  def _handle_model(record)
+    model = record.to_model
+    if model.persisted?
+      meth = model.model_name.singular_route_key + "_path"
+      send(meth, record) # Example: post_path(record)
+    else
+      meth = model.model_name.route_key + "_path"
+      send(meth) # Example: posts_path
+    end
+  end
 end # UrlHelper
+
 ActionView::Helpers.send(:include, Jets::UrlHelper)

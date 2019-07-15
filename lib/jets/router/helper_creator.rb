@@ -5,7 +5,7 @@ class Jets::Router
     end
 
     def define_url_helpers!
-      puts "define_url_helper options #{@options.inspect}"
+      # puts "define_url_helper options #{@options.inspect}"
 
       # index - {:to=>"posts#index", :path=>"posts", :method=>:get}
       # new   - {:to=>"posts#new", :path=>"posts/new", :method=>:get}
@@ -49,7 +49,7 @@ class Jets::Router
           Jets::RoutesHelper.class_eval <<~EOL
             def #{prefix}_path(id)
               # TODO: figure out how to handle different types of objects, not just ids
-              "/#{controller}/" + id.to_s + "/#{action}"
+              "/#{controller}/" + id.to_param + "/#{action}"
             end
           EOL
         elsif path.include?(':') && path !~ %r{/:\w+/} # show action
@@ -59,7 +59,7 @@ class Jets::Router
 
           Jets::RoutesHelper.class_eval <<~EOL
             def #{prefix}_path(id)
-              "/#{controller}/" + id.to_s
+              "/#{controller}/" + id.to_param
             end
           EOL
         end
