@@ -276,4 +276,15 @@ describe Jets::Router::HelperCreator do
       end
     end
   end
+
+  context "url with dash" do
+    let(:options) do
+      { to: "posts#index", path: "url-with-dash", method: :get }
+    end
+    it "method" do
+      creator.define_url_helpers!
+      expect(view.url_with_dash_path).to eq "/url-with-dash"
+    end
+  end
 end
+

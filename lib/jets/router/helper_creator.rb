@@ -29,7 +29,7 @@ class Jets::Router
     #   admin_posts_path: prefix: 'admin', path: 'posts'
     def define_index_method
       as = @options[:as] || @as_option.index
-      name = "#{as}_path"
+      name = underscore("#{as}_path")
 
       result = [@prefix, @path].compact.join('/')
 
@@ -43,7 +43,7 @@ class Jets::Router
     # Example: new_post_path
     def define_new_method
       as = @options[:as] || @as_option.new
-      name = "#{as}_path"
+      name = underscore("#{as}_path")
 
       result = [@prefix, @path_trunk, @action].compact.join('/')
 
@@ -56,7 +56,7 @@ class Jets::Router
 
     def define_show_method
       as = @options[:as] || @as_option.show
-      name = "#{as}_path"
+      name = underscore("#{as}_path")
 
       result = [@prefix, @path_trunk].compact.join('/')
 
@@ -69,7 +69,7 @@ class Jets::Router
 
     def define_edit_method
       as = @options[:as] || @as_option.edit
-      name = "#{as}_path"
+      name = underscore("#{as}_path")
 
       result = [@prefix, @path_trunk].compact.join('/')
 
