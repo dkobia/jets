@@ -14,7 +14,7 @@ module Jets::UrlHelper
           when ActiveRecord::Base
             _handle_model(options)
           else
-            raise ArgumentError, "Please provided a String to link_to as the the second argument. The Jets link_to helper takes as the second argument."
+            raise ArgumentError, "Please provided a String or ActiveRecord model to link_to as the the second argument. The Jets link_to helper takes as the second argument."
           end
 
     add_stage_name(url)
