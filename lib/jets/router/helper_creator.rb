@@ -1,7 +1,16 @@
 class Jets::Router
   class HelperCreator
-    def initialize(options)
+    def initialize(options, helper_module=nil)
       @options = options
+      @helper_module = helper_module || Jets::RoutesHelper
+    end
+
+    def def_meth(str)
+      @helper_module.class_eval(str)
+    end
+
+    def sanitize(str)
+      str.gsub('-','_').gsub('/','_')
     end
 
     def define_url_helpers!
@@ -14,50 +23,50 @@ class Jets::Router
       meth = @options[:method]
       path = @options[:path]
       to = @options[:to]
-      controller_name = to.split('')
 
-      # Notes: prefix is related to path in Rails
+      controller, action = to.split('#')
+      spath = sanitize(path)
+      scontroller = sanitize(controller)
+
+      # Notes: spath is related to path in Rails
 
       # get "posts", to: "posts#index"
       # get "posts/new", to: "posts#new" unless api_mode?
       # get "posts/:id", to: "posts#show"
       # get "posts/:id/edit", to: "posts#edit" unless api_mode?
       if meth == :get
-        if !path.include?('/') # index action
+        case action
+        when 'index'
+          as = @options[:as] || "#{spath}_path"
           # Example: posts_path
-          Jets::RoutesHelper.class_eval <<~EOL
-            def #{path}_path
+          def_meth <<~EOL
+            def #{as}
               "/#{path}"
             end
           EOL
-        elsif !path.include?(':') # new action
-          # prefix = path.to_s.gsub('/','_').singularize # If want to behave the same way as Rails
-          controller, action = path.split('/')[-2..-1] # TODO: account for namespace or extra prefixes in path
-          prefix = "#{action}_#{controller.singularize}"
+        when 'new'
+          prefix = "#{action}_#{scontroller.singularize}"
           # Example: new_post_path
-          Jets::RoutesHelper.class_eval <<~EOL
+          def_meth <<~EOL
             def #{prefix}_path
               "/#{controller}/#{action}"
             end
           EOL
-        elsif path.include?(':') && path =~ %r{/:\w+/} # edit action
+        when 'edit'
           # TODO: account for namespace or extra prefixes in path
-          controller = path.split('/').first
-          action = path.split('/').last
-          prefix = "#{action}_#{controller.singularize}"
+          prefix = "#{action}_#{scontroller.singularize}"
 
-          Jets::RoutesHelper.class_eval <<~EOL
+          def_meth <<~EOL
             def #{prefix}_path(id)
               # TODO: figure out how to handle different types of objects, not just ids
               "/#{controller}/" + id.to_param + "/#{action}"
             end
           EOL
-        elsif path.include?(':') && path !~ %r{/:\w+/} # show action
+        when 'show'
           # TODO: account for namespace or extra prefixes in path
-          controller = path.split('/').first
-          prefix = controller.singularize
+          prefix = scontroller.singularize
 
-          Jets::RoutesHelper.class_eval <<~EOL
+          def_meth <<~EOL
             def #{prefix}_path(id)
               "/#{controller}/" + id.to_param
             end

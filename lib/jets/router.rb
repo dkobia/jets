@@ -2,6 +2,8 @@ require 'text-table'
 
 module Jets
   class Router
+    include Dsl
+
     attr_reader :routes
     def initialize
       @routes = []
@@ -20,53 +22,29 @@ module Jets
       raise collision.exception if collide
     end
 
-    # Methods supported by API Gateway
-    %w[any delete get head options patch post put].each do |method_name|
-      define_method method_name do |path, options|
-        create_route(options.merge(path: path, method: __method__))
-      end
-    end
-
     def create_route(options)
       # Currently only using scope to add namespace
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
-      options[:path] = add_namespace(options[:path])
+      options[:path] = add_module(options[:path])
+      options[:to] = add_path(options[:to])
 
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
     end
 
-    def add_namespace(path)
+    def add_path(to)
+      return to unless @scope
+      path = @scope.full_path
+      return to unless path
+      "#{path}/#{to}"
+    end
+
+    def add_module(path)
       return path unless @scope
-      ns = @scope.full_namespace
-      return path unless ns
-      "#{ns}/#{path}"
-    end
-
-    def namespace(ns, &block)
-      scope(namespace: ns, &block)
-    end
-
-    def scope(options={})
-      root_level = @scope.nil?
-      @scope = root_level ? Scope.new(options) : @scope.new(options)
-      yield
-    ensure
-      @scope = @scope.parent if @scope
-    end
-
-    # resources macro expands to all the routes
-    def resources(name)
-      get "#{name}", to: "#{name}#index"
-      get "#{name}/new", to: "#{name}#new" unless api_mode?
-      get "#{name}/:id", to: "#{name}#show"
-      post "#{name}", to: "#{name}#create"
-      get "#{name}/:id/edit", to: "#{name}#edit" unless api_mode?
-      put "#{name}/:id", to: "#{name}#update"
-      post "#{name}/:id", to: "#{name}#update" # for binary uploads
-      patch "#{name}/:id", to: "#{name}#update"
-      delete "#{name}/:id", to: "#{name}#delete"
+      mod = @scope.full_module
+      return path unless mod
+      "#{mod}/#{path}"
     end
 
     def api_mode?
@@ -81,14 +59,6 @@ module Jets
       end
       api_mode = Jets.config.mode == 'api' || Jets.config.api_mode || Jets.config.api_generator
       api_mode
-    end
-
-    # root "posts#index"
-    def root(to, options={})
-      default = {path: '', to: to, method: :get, root: true}
-      options = default.merge(options)
-      # TODO: define root_url helper
-      @routes << Route.new(options)
     end
 
     # Useful for creating API Gateway Resources

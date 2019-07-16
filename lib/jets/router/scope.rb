@@ -16,14 +16,25 @@ module Jets
         self.class.new(options, self, level + 1)
       end
 
-      def full_namespace
+      def full_module
         ns = []
         current = self
         while current
-          ns.unshift(current.options[:namespace])
+          ns.unshift(current.options[:module])
           current = current.parent
         end
         ns.empty? ? nil : ns.join('/')
+      end
+
+      # TODO: remove duplication
+      def full_path
+        items = []
+        current = self
+        while current
+          items.unshift(current.options[:path])
+          current = current.parent
+        end
+        items.empty? ? nil : items.join('/')
       end
     end
   end
