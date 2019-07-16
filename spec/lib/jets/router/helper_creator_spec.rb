@@ -152,7 +152,7 @@ describe Jets::Router::HelperCreator do
       end
       it "method" do
         creator.define_url_helpers!
-        expect(view.posts_path).to eq "/api/v1/posts"
+        expect(view.api_v1_posts_path).to eq "/api/v1/posts"
       end
     end
 
@@ -162,7 +162,7 @@ describe Jets::Router::HelperCreator do
       end
       it "method" do
         creator.define_url_helpers!
-        expect(view.new_post_path).to eq "/api/v1/posts/new"
+        expect(view.new_api_v1_post_path).to eq "/api/v1/posts/new"
       end
     end
 
@@ -172,7 +172,7 @@ describe Jets::Router::HelperCreator do
       end
       it "method" do
         creator.define_url_helpers!
-        expect(view.post_path(1)).to eq "/api/v1/posts/1"
+        expect(view.api_v1_post_path(1)).to eq "/api/v1/posts/1"
       end
     end
 
@@ -182,7 +182,7 @@ describe Jets::Router::HelperCreator do
       end
       it "method" do
         creator.define_url_helpers!
-        expect(view.edit_post_path(1)).to eq "/api/v1/posts/1/edit"
+        expect(view.edit_api_v1_post_path(1)).to eq "/api/v1/posts/1/edit"
       end
     end
   end

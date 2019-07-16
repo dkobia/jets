@@ -8,7 +8,7 @@ class Jets::Router
     end
 
     def namespace(ns, &block)
-      scope(module: ns, prefix: ns, as: ns, &block)
+      scope(module: ns, prefix: ns, &block)
     end
 
     # scope supports three options: module, prefix and as.

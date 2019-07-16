@@ -30,9 +30,11 @@ module Jets
       # options[:to] = add_path(options[:to])
       # Note: options[:as] directly pass to HelperCreator
 
-      options[:as] = options[:as] || build_as(options)
       options[:module] = options[:module] || @scope&.full_module
       options[:prefix] = options[:prefix] || @scope&.full_prefix
+      options[:as] = options[:as] || build_as(options) # call after prefix option set
+
+      pp options
 
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)

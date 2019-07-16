@@ -1,5 +1,7 @@
 class Jets::Router
   class HelperCreator
+    include Util
+
     def initialize(options, helper_module=nil)
       @options = options
 
@@ -17,11 +19,6 @@ class Jets::Router
 
     def def_meth(str)
       @helper_module.class_eval(str)
-    end
-
-    def underscore(str)
-      return unless str
-      str.gsub('-','_').gsub('/','_')
     end
 
     # Examples:

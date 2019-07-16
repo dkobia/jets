@@ -1,9 +1,11 @@
 class Jets::Router
   class AsOption
+    include Util
+
     def initialize(options)
       @options = options
 
-      @path, @to = @options[:path], @options[:to]
+      @path, @to, @prefix = @options[:path], @options[:to], @options[:prefix]
       @action = @to.split('#').last
 
       @path_trunk = @path.split('/').first # posts/new -> posts
@@ -15,19 +17,19 @@ class Jets::Router
     end
 
     def index
-      @path_trunk
+      join(@prefix, @path_trunk)
     end
 
     def new
-      [@action, @path_trunk.singularize].compact.join('_')
+      join(@action, @prefix, @path_trunk.singularize)
     end
 
     def show
-      @path_trunk.singularize
+      join(@prefix, @path_trunk.singularize)
     end
 
     def edit
-      [@action, @path_trunk.singularize].compact.join('_')
+      join(@action, @prefix, @path_trunk.singularize)
     end
   end
 end
