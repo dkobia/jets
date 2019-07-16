@@ -1,4 +1,4 @@
-# route = Jets::Route.new(
+# route = Jets::Router::Route.new(
 #   path: "posts",
 #   method: :get,
 #   to: "posts#index",

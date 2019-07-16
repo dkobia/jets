@@ -8,10 +8,14 @@ class Jets::Router
     end
 
     def namespace(ns, &block)
-      scope(module: ns, path: ns, as: ns, &block)
+      scope(module: ns, prefix: ns, as: ns, &block)
     end
 
-    # scope supports three options: module, path and as.
+    # scope supports three options: module, prefix and as.
+    # Rails vs Jets:
+    #   module - module
+    #   path - prefix
+    #   as - as
     def scope(options={})
       root_level = @scope.nil?
       @scope = root_level ? Scope.new(options) : @scope.new(options)

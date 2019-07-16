@@ -26,12 +26,19 @@ module Jets
       # Currently only using scope to add namespace
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
-      options[:path] = add_module(options[:path])
-      options[:to] = add_path(options[:to])
-
+      # options[:path] = add_module(options[:path])
+      # options[:to] = add_path(options[:to])
       # Note: options[:as] directly pass to HelperCreator
+
+      options[:path] = build_path(options)
+
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
+    end
+
+    def build_path(options)
+      prefix = options[:prefix] || @scope&.full_path
+      [prefix, options[:path]].compact.join('/')
     end
 
     def add_path(to)

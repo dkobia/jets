@@ -4,8 +4,11 @@ class Jets::Router
       @options = options
 
       @meth, @path, @to = @options[:method], @options[:path], @options[:to]
+      @module, @prefix, @as = @options[:module], @options[:prefix], @options[:as]
+
       @controller, @action = @to.split('#')
-      @spath, @scontroller = sanitize(@path), sanitize(@controller)
+      @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
+      @path_trunk = @path.split('/').first # posts/new -> posts
 
       @helper_module = helper_module || Jets::RoutesHelper
     end
@@ -14,58 +17,65 @@ class Jets::Router
       @helper_module.class_eval(str)
     end
 
-    def sanitize(str)
+    def underscore(str)
+      return unless str
       str.gsub('-','_').gsub('/','_')
     end
 
-    # Example: posts_path
+    # Examples:
+    #   posts_path: path: 'posts'
+    #   admin_posts_path: prefix: 'admin', path: 'posts'
     def define_index_method
-      as = @options[:as] || @spath
+      as = @options[:as] || @path_trunk
       name = "#{as}_path"
 
-      puts "@meth #{@meth}"
-      puts "@path #{@path}"
-      puts "@to #{@to}"
-      puts "@spath #{@spath}"
-      puts "@scontroller #{@scontroller}"
-      puts "name #{name}"
+      result = [@prefix, @path].compact.join('/')
 
       def_meth <<~EOL
         def #{name}
-          "/#{@path}"
+          "/#{result}"
         end
       EOL
     end
 
     # Example: new_post_path
     def define_new_method
-      prefix = "#{@action}_#{@scontroller.singularize}"
-      def_meth <<~EOL
-        def #{prefix}_path
-          "/#{@controller}/#{@action}"
-        end
-      EOL
-    end
+      as = @options[:as]
+      as ||= [@action, @path_trunk.singularize].compact.join('_')
+      name = "#{as}_path"
 
-    def define_edit_method
-      # TODO: account for namespace or extra prefixes in path
-      prefix = "#{@action}_#{@scontroller.singularize}"
+      result = [@prefix, @path_trunk, @action].compact.join('/')
 
       def_meth <<~EOL
-        def #{prefix}_path(id)
-          # TODO: figure out how to handle different types of objects, not just ids
-          "/#{@controller}/" + id.to_param + "/#{@action}"
+        def #{name}
+          "/#{result}"
         end
       EOL
     end
 
     def define_show_method
-      # TODO: account for namespace or extra prefixes in path
-      prefix = @scontroller.singularize
+      as = @options[:as] || @path_trunk.singularize
+      name = "#{as}_path"
+
+      result = [@prefix, @path_trunk].compact.join('/')
 
       def_meth <<~EOL
-        def #{prefix}_path(id)
-          "/#{@controller}/" + id.to_param
+        def #{name}(id)
+          "/#{result}/" + id.to_param
+        end
+      EOL
+    end
+
+    def define_edit_method
+      as = @options[:as]
+      as ||= [@action, @path_trunk.singularize].compact.join('_')
+      name = "#{as}_path"
+
+      result = [@prefix, @path_trunk].compact.join('/')
+
+      def_meth <<~EOL
+        def #{name}(id)
+          "/#{result}/" + id.to_param + "/#{@action}"
         end
       EOL
     end
