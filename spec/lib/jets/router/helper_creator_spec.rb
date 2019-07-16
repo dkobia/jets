@@ -186,4 +186,94 @@ describe Jets::Router::HelperCreator do
       end
     end
   end
+
+  # scope module: "api/v1" do
+  #   get "posts", to "posts#index"
+  # end
+  context "scope api/v1" do
+    context "posts_path" do
+      let(:options) do
+        { to: "posts#index", path: "posts", method: :get, module: "api/v1" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.posts_path).to eq "/posts"
+      end
+    end
+
+    context "new_post_path" do
+      let(:options) do
+        { to: "posts#new", path: "posts/new", method: :get, module: "api/v1" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.new_post_path).to eq "/posts/new"
+      end
+    end
+
+    context "post_path" do
+      let(:options) do
+        { to: "posts#show", path: "posts/:id", method: :get, module: "api/v1" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.post_path(1)).to eq "/posts/1"
+      end
+    end
+
+    context "edit_post_path" do
+      let(:options) do
+        { to: "posts#edit", path: "posts/:id/edit", method: :get, module: "api/v1" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.edit_post_path(1)).to eq "/posts/1/edit"
+      end
+    end
+  end
+
+  # scope as: "api/v1" do
+  #   get "posts", to "posts#index"
+  # end
+  context "scope api/v1" do
+    context "api_v1_posts_path" do
+      let(:options) do
+        { to: "posts#index", path: "posts", method: :get, as: "api_v1_posts" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.api_v1_posts_path).to eq "/posts"
+      end
+    end
+
+    context "new_api_v1_post_path" do
+      let(:options) do
+        { to: "posts#new", path: "posts/new", method: :get, as: "new_api_v1_post" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.new_api_v1_post_path).to eq "/posts/new"
+      end
+    end
+
+    context "api_v1_post_path" do
+      let(:options) do
+        { to: "posts#show", path: "posts/:id", method: :get, as: "api_v1_post" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.api_v1_post_path(1)).to eq "/posts/1"
+      end
+    end
+
+    context "edit_api_v1_post_path" do
+      let(:options) do
+        { to: "posts#edit", path: "posts/:id/edit", method: :get, as: "edit_api_v1_post" }
+      end
+      it "method" do
+        creator.define_url_helpers!
+        expect(view.edit_api_v1_post_path(1)).to eq "/posts/1/edit"
+      end
+    end
+  end
 end
