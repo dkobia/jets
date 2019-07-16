@@ -30,29 +30,16 @@ module Jets
       # options[:to] = add_path(options[:to])
       # Note: options[:as] directly pass to HelperCreator
 
-      options[:path] = build_path(options)
+      options[:as] = options[:as] || build_as(options)
+      options[:module] = options[:module] || @scope&.full_module
+      options[:prefix] = options[:prefix] || @scope&.full_prefix
 
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
     end
 
-    def build_path(options)
-      prefix = options[:prefix] || @scope&.full_path
-      [prefix, options[:path]].compact.join('/')
-    end
-
-    def add_path(to)
-      return to unless @scope
-      path = @scope.full_path
-      return to unless path
-      "#{path}/#{to}"
-    end
-
-    def add_module(path)
-      return path unless @scope
-      mod = @scope.full_module
-      return path unless mod
-      "#{mod}/#{path}"
+    def build_as(options)
+      AsOption.new(options).build
     end
 
     def api_mode?

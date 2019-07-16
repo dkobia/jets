@@ -26,12 +26,12 @@ module Jets
         ns.empty? ? nil : ns.join('/')
       end
 
-      # TODO: remove duplication
-      def full_path
+      # TODO: remove duplication: full_prefix vs full_module
+      def full_prefix
         items = []
         current = self
         while current
-          items.unshift(current.options[:path])
+          items.unshift(current.options[:prefix])
           current = current.parent
         end
         items.empty? ? nil : items.join('/')

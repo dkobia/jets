@@ -4,13 +4,15 @@ class Jets::Router
       @options = options
 
       @meth, @path, @to = @options[:method], @options[:path], @options[:to]
-      @module, @prefix, @as = @options[:module], @options[:prefix], @options[:as]
+      @prefix, @as = @options[:prefix], @options[:as]
 
       @controller, @action = @to.split('#')
       @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
       @path_trunk = @path.split('/').first # posts/new -> posts
 
       @helper_module = helper_module || Jets::RoutesHelper
+
+      @as_option = AsOption.new(options)
     end
 
     def def_meth(str)
@@ -26,7 +28,7 @@ class Jets::Router
     #   posts_path: path: 'posts'
     #   admin_posts_path: prefix: 'admin', path: 'posts'
     def define_index_method
-      as = @options[:as] || @path_trunk
+      as = @options[:as] || @as_option.index
       name = "#{as}_path"
 
       result = [@prefix, @path].compact.join('/')
@@ -40,8 +42,7 @@ class Jets::Router
 
     # Example: new_post_path
     def define_new_method
-      as = @options[:as]
-      as ||= [@action, @path_trunk.singularize].compact.join('_')
+      as = @options[:as] || @as_option.new
       name = "#{as}_path"
 
       result = [@prefix, @path_trunk, @action].compact.join('/')
@@ -54,7 +55,7 @@ class Jets::Router
     end
 
     def define_show_method
-      as = @options[:as] || @path_trunk.singularize
+      as = @options[:as] || @as_option.show
       name = "#{as}_path"
 
       result = [@prefix, @path_trunk].compact.join('/')
@@ -67,8 +68,7 @@ class Jets::Router
     end
 
     def define_edit_method
-      as = @options[:as]
-      as ||= [@action, @path_trunk.singularize].compact.join('_')
+      as = @options[:as] || @as_option.edit
       name = "#{as}_path"
 
       result = [@prefix, @path_trunk].compact.join('/')
@@ -107,10 +107,10 @@ class Jets::Router
         define_index_method
       when 'new'
         define_new_method
-      when 'edit'
-        define_edit_method
       when 'show'
         define_show_method
+      when 'edit'
+        define_edit_method
       end
     end
   end
