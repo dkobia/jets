@@ -29,6 +29,7 @@ module Jets
       options[:path] = add_module(options[:path])
       options[:to] = add_path(options[:to])
 
+      # Note: options[:as] directly pass to HelperCreator
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
     end

@@ -20,9 +20,18 @@ class Jets::Router
 
     # Example: posts_path
     def define_index_method
-      as = @options[:as] || "#{@spath}_path"
+      as = @options[:as] || @spath
+      name = "#{as}_path"
+
+      puts "@meth #{@meth}"
+      puts "@path #{@path}"
+      puts "@to #{@to}"
+      puts "@spath #{@spath}"
+      puts "@scontroller #{@scontroller}"
+      puts "name #{name}"
+
       def_meth <<~EOL
-        def #{as}
+        def #{name}
           "/#{@path}"
         end
       EOL
