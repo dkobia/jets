@@ -81,17 +81,17 @@ class Jets::Router
     #   patch "posts/:id", to: "posts#update"
     #
     def define_url_helpers!
-      if @meth == :get
-        case @action
-        when 'index'
-          define_index_method
-        when 'new'
-          define_new_method
-        when 'edit'
-          define_edit_method
-        when 'show'
-          define_show_method
-        end
+      return unless @meth == :get
+
+      case @action
+      when 'index'
+        define_index_method
+      when 'new'
+        define_new_method
+      when 'edit'
+        define_edit_method
+      when 'show'
+        define_show_method
       end
     end
   end
