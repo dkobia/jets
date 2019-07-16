@@ -33,6 +33,10 @@ class Jets::Router
       @options[:to]
     end
 
+    def prefix
+      @options[:as]
+    end
+
     def internal?
       !!@options[:internal]
     end

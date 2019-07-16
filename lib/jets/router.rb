@@ -34,8 +34,6 @@ module Jets
       options[:prefix] = options[:prefix] || @scope&.full_prefix
       options[:as] = options[:as] || build_as(options) # call after prefix option set
 
-      pp options
-
       HelperCreator.new(options).define_url_helpers!
       @routes << Route.new(options)
     end
@@ -129,9 +127,9 @@ module Jets
       return "Your routes table is empty." if routes.empty?
 
       table = Text::Table.new
-      table.head = %w[Verb Path Controller#action]
+      table.head = %w[Prefix Verb Path Controller#action]
       routes.each do |route|
-        table.rows << [route.method, route.path, route.to]
+        table.rows << [route.prefix, route.method, route.path, route.to]
       end
       table
     end

@@ -5,15 +5,20 @@ class Jets::Router
     def initialize(options)
       @options = options
 
-      @path, @to, @prefix = @options[:path], @options[:to], @options[:prefix]
+      @meth, @path, @to, @prefix = @options[:method], @options[:path], @options[:to], @options[:prefix]
       @action = @to.split('#').last
 
       @path_trunk = @path.split('/').first # posts/new -> posts
     end
 
     def build
-      return unless [:index, :new, :show, :edit].include?(@action)
-      send(@action)
+      return unless @meth == :get
+
+      if %w[index new show edit].include?(@action)
+        send(@action)
+      else
+        stock_get
+      end
     end
 
     def index
@@ -32,6 +37,7 @@ class Jets::Router
       join(@action, @prefix, @path_trunk.singularize)
     end
 
+    # TODO: is this the convention we want? Like it because it is simple
     def stock_get
       join(@action, @prefix, @path_trunk)
     end
