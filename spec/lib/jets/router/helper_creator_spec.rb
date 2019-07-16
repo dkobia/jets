@@ -12,7 +12,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.posts_path).to eq "/posts"
       end
     end
@@ -22,7 +22,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_post_path).to eq "/posts/new"
       end
     end
@@ -32,7 +32,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.post_path(1)).to eq "/posts/1"
       end
     end
@@ -42,7 +42,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_post_path(1)).to eq "/posts/1/edit"
       end
     end
@@ -57,7 +57,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get, module: "admin", prefix: "admin", as: "admin_posts" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.admin_posts_path).to eq "/admin/posts"
       end
     end
@@ -67,7 +67,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get, module: "admin", prefix: "admin", as: "new_admin_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_admin_post_path).to eq "/admin/posts/new"
       end
     end
@@ -77,7 +77,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get, module: "admin", prefix: "admin", as: "admin_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.admin_post_path(1)).to eq "/admin/posts/1"
       end
     end
@@ -87,7 +87,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get, module: "admin", prefix: "admin", as: "edit_admin_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_admin_post_path(1)).to eq "/admin/posts/1/edit"
       end
     end
@@ -102,7 +102,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get, module: "api/v1", prefix: "api/v1", as: "api_v1_posts" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_posts_path).to eq "/api/v1/posts"
       end
     end
@@ -112,7 +112,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get, module: "api/v1", prefix: "api/v1", as: "new_api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_api_v1_post_path).to eq "/api/v1/posts/new"
       end
     end
@@ -122,7 +122,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get, module: "api/v1", prefix: "api/v1", as: "api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_post_path(1)).to eq "/api/v1/posts/1"
       end
     end
@@ -132,7 +132,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get, module: "api/v1", prefix: "api/v1", as: "edit_api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_api_v1_post_path(1)).to eq "/api/v1/posts/1/edit"
       end
     end
@@ -151,7 +151,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get, prefix: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_posts_path).to eq "/api/v1/posts"
       end
     end
@@ -161,7 +161,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get, prefix: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_api_v1_post_path).to eq "/api/v1/posts/new"
       end
     end
@@ -171,7 +171,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get, prefix: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_post_path(1)).to eq "/api/v1/posts/1"
       end
     end
@@ -181,7 +181,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get, prefix: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_api_v1_post_path(1)).to eq "/api/v1/posts/1/edit"
       end
     end
@@ -196,7 +196,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get, module: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.posts_path).to eq "/posts"
       end
     end
@@ -206,7 +206,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get, module: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_post_path).to eq "/posts/new"
       end
     end
@@ -216,7 +216,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get, module: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.post_path(1)).to eq "/posts/1"
       end
     end
@@ -226,7 +226,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get, module: "api/v1" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_post_path(1)).to eq "/posts/1/edit"
       end
     end
@@ -241,7 +241,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#index", path: "posts", method: :get, as: "api_v1_posts" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_posts_path).to eq "/posts"
       end
     end
@@ -251,7 +251,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#new", path: "posts/new", method: :get, as: "new_api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.new_api_v1_post_path).to eq "/posts/new"
       end
     end
@@ -261,7 +261,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#show", path: "posts/:id", method: :get, as: "api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.api_v1_post_path(1)).to eq "/posts/1"
       end
     end
@@ -271,7 +271,7 @@ describe Jets::Router::HelperCreator do
         { to: "posts#edit", path: "posts/:id/edit", method: :get, as: "edit_api_v1_post" }
       end
       it "method" do
-        creator.define_url_helpers!
+        creator.define_url_helper!
         expect(view.edit_api_v1_post_path(1)).to eq "/posts/1/edit"
       end
     end
@@ -282,7 +282,7 @@ describe Jets::Router::HelperCreator do
       { to: "posts#index", path: "url-with-dash", method: :get }
     end
     it "method" do
-      creator.define_url_helpers!
+      creator.define_url_helper!
       expect(view.url_with_dash_path).to eq "/url-with-dash"
     end
   end

@@ -22,6 +22,8 @@ class Jets::Router
     end
 
     def index
+      puts "as_option.rb @prefix #{@prefix.inspect}"
+      puts "as_option.rb @path_trunk #{@path_trunk.inspect}"
       join(@prefix, @path_trunk)
     end
 

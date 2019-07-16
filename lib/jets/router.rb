@@ -23,18 +23,13 @@ module Jets
     end
 
     def create_route(options)
-      # Currently only using scope to add namespace
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
-      # options[:path] = add_module(options[:path])
-      # options[:to] = add_path(options[:to])
-      # Note: options[:as] directly pass to HelperCreator
-
       options[:module] = options[:module] || @scope&.full_module
       options[:prefix] = options[:prefix] || @scope&.full_prefix
       options[:as] = options[:as] || build_as(options) # call after prefix option set
 
-      HelperCreator.new(options).define_url_helpers!
+      HelperCreator.new(options).define_url_helper!
       @routes << Route.new(options)
     end
 
@@ -129,7 +124,8 @@ module Jets
       table = Text::Table.new
       table.head = %w[Prefix Verb Path Controller#action]
       routes.each do |route|
-        table.rows << [route.prefix, route.method, route.path, route.to]
+        prefix = route.as # not a typo
+        table.rows << [prefix, route.method, route.path, route.to]
       end
       table
     end

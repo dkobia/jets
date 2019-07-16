@@ -33,7 +33,7 @@ class Jets::Router
       @options[:to]
     end
 
-    def prefix
+    def as
       @options[:as]
     end
 

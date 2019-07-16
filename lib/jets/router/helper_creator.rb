@@ -112,7 +112,7 @@ class Jets::Router
     #   post "posts/:id", to: "posts#update" # for binary uploads
     #   patch "posts/:id", to: "posts#update"
     #
-    def define_url_helpers!
+    def define_url_helper!
       return unless @meth == :get
 
       case @action

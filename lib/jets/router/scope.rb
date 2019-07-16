@@ -17,23 +17,21 @@ module Jets
       end
 
       def full_module
-        ns = []
-        current = self
-        while current
-          ns.unshift(current.options[:module])
-          current = current.parent
-        end
-        ns.empty? ? nil : ns.join('/')
+        full(:module)
       end
 
-      # TODO: remove duplication: full_prefix vs full_module
       def full_prefix
+        full(:prefix)
+      end
+
+      def full(option_name)
         items = []
         current = self
         while current
-          items.unshift(current.options[:prefix])
+          items.unshift(current.options[option_name]) # <= option_name
           current = current.parent
         end
+        items.compact!
         items.empty? ? nil : items.join('/')
       end
     end
