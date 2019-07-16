@@ -31,5 +31,9 @@ class Jets::Router
     def edit
       join(@action, @prefix, @path_trunk.singularize)
     end
+
+    def stock_get
+      join(@action, @prefix, @path_trunk)
+    end
   end
 end

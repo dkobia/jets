@@ -57,6 +57,7 @@ class Jets::Router
 
       result = [@prefix, @path_trunk].compact.join('/')
 
+      # TODO: user_post(user_id, id) ???
       def_meth <<~EOL
         def #{name}(id)
           "/#{result}/" + id.to_param
@@ -70,6 +71,21 @@ class Jets::Router
 
       result = [@prefix, @path_trunk].compact.join('/')
 
+      # TODO: user_post(user_id, id) ???
+      def_meth <<~EOL
+        def #{name}(id)
+          "/#{result}/" + id.to_param + "/#{@action}"
+        end
+      EOL
+    end
+
+    def define_stock_get_method
+      as = @options[:as] || @as_option.stock_get
+      name = underscore("#{as}_path")
+
+      result = [@prefix, @path].compact.join('/')
+
+      # TODO: user_post(user_id, id) ???
       def_meth <<~EOL
         def #{name}(id)
           "/#{result}/" + id.to_param + "/#{@action}"
@@ -108,6 +124,8 @@ class Jets::Router
         define_show_method
       when 'edit'
         define_edit_method
+      else
+        define_stock_get_method
       end
     end
   end
