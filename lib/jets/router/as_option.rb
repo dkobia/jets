@@ -6,7 +6,7 @@ class Jets::Router
       @options = options
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
 
-      @action = @to.split('#').last
+      @controller, @action = get_controller_action(options)
       @path_trunk = @path.split('/').first # posts/new -> posts
     end
 

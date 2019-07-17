@@ -8,7 +8,7 @@ class Jets::Router
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
       @prefix, @as = @options[:prefix], @options[:as]
 
-      @controller, @action = @to.split('#')
+      @controller, @action = get_controller_action(options)
       @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
       @path_trunk = @path.split('/').first # posts/new -> posts
 

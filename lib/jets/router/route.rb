@@ -5,6 +5,8 @@
 # )
 class Jets::Router
   class Route
+    include Util
+
     CAPTURE_REGEX = "([^/]*)" # as string
 
     def initialize(options)
@@ -18,9 +20,8 @@ class Jets::Router
     end
 
     def compute_to
-      controller, action = @options[:to].split('#')
+      controller, action = get_controller_action(@options)
       controller = [@options[:module], controller].compact.join('/') # add module
-      controller = @options[:controller] if @options[:controller] # overrides if user specifies
       "#{controller}##{action}"
     end
 
