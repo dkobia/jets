@@ -19,14 +19,9 @@ module Jets
       end
 
       def full_module
-        items = []
+        items, i = [], 0
         current = self
-
-        i = 0
         while current
-          # puts "scope current: module #{current.level}".color(:yellow)
-          # pp current
-
           leaf = current.options[:module]
           if leaf
             case current.from
@@ -39,27 +34,19 @@ module Jets
             end
           end
 
-          # puts "items #{items}"
-
           current = current.parent
           i += 1
         end
         items.compact!
-
         return if items.empty?
 
         items.join('/')
       end
 
       def full_prefix
-        items = []
+        items, i = [], 0
         current = self
-
-        i = 0
         while current
-          # puts "scope current: prefix #{current.level}".color(:yellow)
-          # pp current
-
           leaf = current.options[:prefix]
           if leaf
             case current.from
@@ -73,13 +60,10 @@ module Jets
             end
           end
 
-          # puts "items #{items}"
-
           current = current.parent
           i += 1
         end
         items.compact!
-
         return if items.empty?
 
         items.join('/')
@@ -92,7 +76,6 @@ module Jets
           items.unshift(current.options[:as]) # <= option_name
           current = current.parent
         end
-
         items.compact!
         return if items.empty?
 
@@ -107,15 +90,6 @@ module Jets
           item = item.to_s
           r = index == items.size - 1 ? item : item.singularize
           result << r
-        end
-        result
-      end
-
-      def expand_items(items)
-        result = []
-        items.each do |i|
-          result << i
-          result << ":#{i.to_s.singularize}_id"
         end
         result
       end

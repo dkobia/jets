@@ -17,6 +17,7 @@ class Jets::Router
     #   prefix - path
     #   as - as
     def scope(args)
+      # normalizes `scope(:admin)` as `scope(prefix: :admin)`
       options = case args
       when Hash
         args
