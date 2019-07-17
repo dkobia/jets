@@ -8,9 +8,15 @@ describe Jets::Router do
         router.draw do
           # resources :posts
 
-          resources :posts do
-            resources :comments#, only: [:index, :edit]
-          end
+          # resources :posts do
+          #   resources :comments#, only: [:index, :edit]
+          # end
+
+          # resources :users do
+          #   resources :posts do
+          #     resources :comments#, only: [:index, :edit]
+          #   end
+          # end
 
           # resources :posts, param: :post_id do
           #   resources :comments#, only: [:index, :edit]
