@@ -8,7 +8,7 @@ class Jets::Router
     end
 
     def namespace(ns, &block)
-      scope(module: ns, prefix: ns, as: ns, &block)
+      scope(module: ns, prefix: ns, as: ns, namespace: true, &block)
     end
 
     # scope supports three options: module, prefix and as.
@@ -28,8 +28,8 @@ class Jets::Router
     def resources(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
-        # puts "dsl.rb item #{item}".color(:yellow)
-        # puts "scope_options #{scope_options}"
+        puts "dsl.rb item #{item}".color(:yellow)
+        puts "scope_options #{scope_options}"
         scope(scope_options) do
           resources_each(item, options, block_given?)
           yield if block_given?
@@ -38,12 +38,16 @@ class Jets::Router
     end
 
     def scope_options!(item, options)
-      {
-        as: options[:as] || item,
-        prefix: options[:prefix] || item,
+      o = {
+        as: options.delete(:as) || item,
+        prefix: options.delete(:prefix) || item,
         # module: options[:module] || item,
         resources: true, # flag we can disregard @path_trunk in AsOption class.
       }
+      if @scope
+        o = @scope.options.merge(o)
+      end
+      o
     end
 
     def resources_each(name, options={}, has_block)

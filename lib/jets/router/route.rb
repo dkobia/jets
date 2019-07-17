@@ -19,6 +19,7 @@ class Jets::Router
 
     def compute_path
       prefix = @scope.full(:prefix)
+      puts "compute_path prefix #{prefix}"
       [prefix, @options[:path]].compact.join('/')
 
       # [@options[:prefix], @options[:path]].compact.join('/')

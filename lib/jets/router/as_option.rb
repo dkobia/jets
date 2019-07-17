@@ -9,11 +9,15 @@ class Jets::Router
 
       @controller, @action = get_controller_action(options)
 
+      # posts/new -> posts
+      # @path_trunk = @path.split('/').first if @scope.options[:namespace]
+      @path_trunk = nil
+
       # puts "as_option.rb @scope".color(:yellow)
       # pp scope
       @full_as = @scope&.full(:as)
       @full_as.singularize if @scope.resources?
-      # puts "@full_as #{@full_as}".color(:yellow)
+      puts "@full_as #{@full_as}".color(:yellow)
     end
 
     def build
@@ -27,24 +31,24 @@ class Jets::Router
     end
 
     def index
-      join(@full_as)
+      join(@full_as, @path_trunk)
     end
 
     def new
-      join(@action, @full_as.singularize)
+      join(@action, @full_as.singularize, @path_trunk&.singularize)
     end
 
     def show
-      join(@full_as.singularize)
+      join(@full_as.singularize, @path_trunk&.singularize)
     end
 
     def edit
-      join(@action, @full_as.singularize)
+      join(@action, @full_as.singularize, @path_trunk&.singularize)
     end
 
     # TODO: is this the convention we want? Like it because it is simple
     def stock_get
-      join(@action, @full_as)
+      join(@action, @full_as, @path_trunk)
     end
   end
 end

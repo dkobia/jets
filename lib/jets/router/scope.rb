@@ -33,13 +33,28 @@ module Jets
         end
         items.compact!
 
-
+        # TODO: REMOVE THIS MESSY DUPLICATION
+        puts "@options.inspect #{@options.inspect}"
         if option_name == :prefix
-          items = expand_items(items)
-          items = items[0..-3] || [] if resources?
+          if namespace?
+            items = items[0..-2] || []
+          elsif resources?
+            items = expand_items(items)
+            items = items[0..-3] || []
+          else
+            puts "UNSURE IF WE'LL GET HERE"
+          end
+        end
+
+        if option_name == :module
+          if namespace?
+            items = items[0..-2] || []
+          end
         end
 
         return if items.empty?
+
+        puts "items #{items}"
 
         if option_name == :as
           items = singularize_leading(items)
@@ -76,6 +91,10 @@ module Jets
       # Use this flag in the AsOption builder to disregard the @path_trunk
       def resources?
         @options[:resources]
+      end
+
+      def namespace?
+        @options[:namespace]
       end
     end
   end
