@@ -18,66 +18,13 @@ module Jets
         self.class.new(options, self, level + 1)
       end
 
-      # Examples:
-      #
-      #     scope.full(:module)
-      #     scope.full(:prefix)
-      #     scope.full(:as)
-      #
-      def full(option_name)
-        items = []
-        current = self
-        while current
-
-          # puts "scope current: #{option_name} #{current.level}".color(:yellow)
-          # pp current
-
-          items.unshift(current.options[option_name]) # <= option_name
-          current = current.parent
-        end
-        items.compact!
-
-
-        # TODO: REMOVE THIS MESSY DUPLICATION
-        # TODO: move this expand_items to be part of the unshift logic above ^^^
-        if option_name == :prefix
-          if from == :resources
-            items = items[0..-2] || []
-          elsif from == :resources
-            items = expand_items(items)
-            items = items[0..-3] || []
-          else
-            puts "UNSURE IF WE'LL GET HERE"
-          end
-        end
-
-        if option_name == :module
-          if from == :resources
-            items = items[0..-2] || [] # works for 1 level nested
-            # items = items[0..-3] || [] # works for 2 level nested??
-          # elsif resources?
-          #   items = expand_items(items)
-          #   items = items[0..-3] || []
-          end
-        end
-
-        return if items.empty?
-
-        if option_name == :as
-          items = singularize_leading(items)
-          items.join('_')
-        else
-          items.join('/')
-        end
-      end
-
       def full_module
         items = []
         current = self
 
         i = 0
         while current
-          # puts "scope current: module2 #{current.level}".color(:yellow)
+          # puts "scope current: module #{current.level}".color(:yellow)
           # pp current
 
           leaf = current.options[:module]
@@ -136,6 +83,21 @@ module Jets
         return if items.empty?
 
         items.join('/')
+      end
+
+      def full_as
+        items = []
+        current = self
+        while current
+          items.unshift(current.options[:as]) # <= option_name
+          current = current.parent
+        end
+
+        items.compact!
+        return if items.empty?
+
+        items = singularize_leading(items)
+        items.join('_')
       end
 
       # singularize all except last item

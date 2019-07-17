@@ -230,12 +230,12 @@ EOL
 #######################################################################
 
     context "main test project" do
-      it "draw class method" do
-        router = Jets::Router.draw
-        expect(router).to be_a(Jets::Router)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
-      end
+      # it "draw class method" do
+      #   router = Jets::Router.draw
+      #   expect(router).to be_a(Jets::Router)
+      #   expect(router.routes).to be_a(Array)
+      #   expect(router.routes.first).to be_a(Jets::Router::Route)
+      # end
 
       it "builds up routes in memory" do
         # uses fixtures/apps/demo/config/routes.rb
@@ -263,6 +263,16 @@ EOL
         router.draw do
           root "posts#index"
         end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++------+------+------+-------------------+
+|  As  | Verb | Path | Controller#action |
++------+------+------+-------------------+
+| root | GET  |      | posts#index       |
++------+------+------+-------------------+
+EOL
+        expect(output).to eq(table)
 
         route = router.routes.first
         expect(route).to be_a(Jets::Router::Route)
@@ -305,31 +315,47 @@ EOL
       end
     end
 
-    context "routes with namespaces" do
+    context "scope with module" do
       # more general scope method
-      it "admin namespace" do
+      it "admin module" do
         router.draw do
-          scope(namespace: :admin) do
+          scope(module: :admin) do
             get "posts", to: "posts#index"
           end
         end
-        route = router.routes.first
-        expect(route.path).to eq "admin/posts"
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+-------+-------------------+
+|  As   | Verb | Path  | Controller#action |
++-------+------+-------+-------------------+
+| posts | GET  | posts | admin/posts#index |
++-------+------+-------+-------------------+
+EOL
+        expect(output).to eq(table)
       end
 
-      it "api/v1 namespace nested" do
+      it "api/v1 module nested" do
         router.draw do
-          scope(namespace: :api) do
-            scope(namespace: :v1) do
+          scope(module: :api) do
+            scope(module: :v1) do
               get "posts", to: "posts#index"
             end
           end
         end
-        route = router.routes.first
-        expect(route.path).to eq "api/v1/posts"
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+-------+--------------------+
+|  As   | Verb | Path  | Controller#action  |
++-------+------+-------+--------------------+
+| posts | GET  | posts | api/v1/posts#index |
++-------+------+-------+--------------------+
+EOL
+        expect(output).to eq(table)
       end
 
-      it "api/v1 namespace oneline" do
+      it "api/v1 module oneline" do
         router.draw do
           scope(module: "api/v1") do
             get "posts", to: "posts#index"
@@ -338,30 +364,69 @@ EOL
 
         output = Jets::Router.help(router.routes).to_s
         table =<<EOL
-+----+------+-------+--------------------+
-| As | Verb | Path  | Controller#action  |
-+----+------+-------+--------------------+
-|    | GET  | posts | api/v1/posts#index |
-+----+------+-------+--------------------+
++-------+------+-------+--------------------+
+|  As   | Verb | Path  | Controller#action  |
++-------+------+-------+--------------------+
+| posts | GET  | posts | api/v1/posts#index |
++-------+------+-------+--------------------+
 EOL
         expect(output).to eq(table)
       end
 
-      it "get posts" do
+      it "get posts 1" do
         router.draw do
-          get "posts", to: "posts#index"
+          resources :posts
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
-+----+------+-------+--------------------+
-| As | Verb | Path  | Controller#action  |
-+----+------+-------+--------------------+
-|    | GET  | posts | api/v1/posts#index |
-+----+------+-------+--------------------+
++-----------+--------+----------------+-------------------+
+|    As     |  Verb  |      Path      | Controller#action |
++-----------+--------+----------------+-------------------+
+| posts     | GET    | posts          | posts#index       |
+| new_post  | GET    | posts/new      | posts#new         |
+| post      | GET    | posts/:id      | posts#show        |
+|           | POST   | posts          | posts#create      |
+| edit_post | GET    | posts/:id/edit | posts#edit        |
+|           | PUT    | posts/:id      | posts#update      |
+|           | POST   | posts/:id      | posts#update      |
+|           | PATCH  | posts/:id      | posts#update      |
+|           | DELETE | posts/:id      | posts#delete      |
++-----------+--------+----------------+-------------------+
 EOL
-        # expect(output).to eq(table)
+        expect(output).to eq(table)
+      end
+
+      it "get posts 2" do
+        router.draw do
+          get "posts", to: "posts#index"
+          get "posts/new", to: "posts#new"
+          get "posts/:id", to: "posts#show"
+          post "posts", to: "posts#create"
+          get "posts/:id/edit", to: "posts#edit"
+          put "posts/:id", to: "posts#update"
+          post "posts/:id", to: "posts#update"
+          patch "posts/:id", to: "posts#update"
+          delete "posts/:id", to: "posts#delete"
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------+--------+----------------+-------------------+
+|    As     |  Verb  |      Path      | Controller#action |
++-----------+--------+----------------+-------------------+
+| posts     | GET    | posts          | posts#index       |
+| new_post  | GET    | posts/new      | posts#new         |
+| post      | GET    | posts/:id      | posts#show        |
+|           | POST   | posts          | posts#create      |
+| edit_post | GET    | posts/:id/edit | posts#edit        |
+|           | PUT    | posts/:id      | posts#update      |
+|           | POST   | posts/:id      | posts#update      |
+|           | PATCH  | posts/:id      | posts#update      |
+|           | DELETE | posts/:id      | posts#delete      |
++-----------+--------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
       end
 
       # prettier namespace method
@@ -374,8 +439,6 @@ EOL
         route = router.routes.first
         expect(route.path).to eq "api/v2/posts"
       end
-
-
     end
   end
 end

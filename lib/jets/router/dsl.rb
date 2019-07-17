@@ -78,7 +78,8 @@ class Jets::Router
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
       # TODO: define root_url helper
-      @routes << Route.new(options)
+      HelperCreator.new(options, @scope).define_root_helper
+      @routes << Route.new(options, @scope)
     end
   end
 end

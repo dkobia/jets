@@ -6,21 +6,17 @@ class Jets::Router
       @options, @scope = options, scope
 
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
-
       @controller, @action = get_controller_action(options)
 
-      # posts/new -> posts
-      # @path_trunk = @path.split('/').first if @scope.options[:namespace]
-      @path_trunk = nil
-
-      # puts "as_option.rb @scope".color(:yellow)
-      # pp scope
-      @full_as = @scope&.full(:as)
-      @full_as.singularize if @scope.from == :resources
-      # puts "@full_as #{@full_as}".color(:yellow)
+      # @path_trunk: posts/new -> posts
+      # unless @scope.from == :resources because resources creates an extra layer
+      @path_trunk = @path.split('/').first unless @scope.from == :resources
+      @full_as = @scope&.full_as
     end
 
     def build
+      return send(:root) if @options[:root]
+
       return unless @meth == :get
 
       if %w[index new show edit].include?(@action)
@@ -35,20 +31,30 @@ class Jets::Router
     end
 
     def new
-      join(@action, @full_as.singularize, @path_trunk&.singularize)
+      join(@action, singularize(@full_as), singularize(@path_trunk))
     end
 
     def show
-      join(@full_as.singularize, @path_trunk&.singularize)
+      join(singularize(@full_as), singularize(@path_trunk))
     end
 
     def edit
-      join(@action, @full_as.singularize, @path_trunk&.singularize)
+      join(@action, singularize(@full_as), singularize(@path_trunk))
     end
 
     # TODO: is this the convention we want? Like it because it is simple
     def stock_get
       join(@action, @full_as, @path_trunk)
+    end
+
+    def root
+      "root"
+    end
+
+  private
+    def singularize(s)
+      return unless s # nil
+      s.singularize
     end
   end
 end

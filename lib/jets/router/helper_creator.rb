@@ -126,5 +126,18 @@ class Jets::Router
         define_stock_get_method
       end
     end
+
+    def define_root_helper
+      as = @options[:as] || @as_option.root
+      name = underscore("#{as}_path")
+
+      result = [@prefix, @path].compact.join('/')
+
+      def_meth <<~EOL
+        def #{name}
+          "/#{result}"
+        end
+      EOL
+    end
   end
 end
