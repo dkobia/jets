@@ -28,16 +28,22 @@ module Jets
         items = []
         current = self
         while current
+
+          # puts "scope current: #{option_name} #{current.level}".color(:yellow)
+          # pp current
+
           items.unshift(current.options[option_name]) # <= option_name
           current = current.parent
         end
         items.compact!
 
+
         # TODO: REMOVE THIS MESSY DUPLICATION
+        # TODO: move this expand_items to be part of the unshift logic above ^^^
         if option_name == :prefix
-          if namespace?
+          if from == :resources
             items = items[0..-2] || []
-          elsif resources?
+          elsif from == :resources
             items = expand_items(items)
             items = items[0..-3] || []
           else
@@ -46,8 +52,12 @@ module Jets
         end
 
         if option_name == :module
-          if namespace?
-            items = items[0..-2] || []
+          if from == :resources
+            items = items[0..-2] || [] # works for 1 level nested
+            # items = items[0..-3] || [] # works for 2 level nested??
+          # elsif resources?
+          #   items = expand_items(items)
+          #   items = items[0..-3] || []
           end
         end
 
@@ -59,6 +69,73 @@ module Jets
         else
           items.join('/')
         end
+      end
+
+      def full_module
+        items = []
+        current = self
+
+        i = 0
+        while current
+          # puts "scope current: module2 #{current.level}".color(:yellow)
+          # pp current
+
+          leaf = current.options[:module]
+          if leaf
+            case current.from
+            when :resources
+              unless i == 0 # since resources creates an extra layer
+                items.unshift(leaf)
+              end
+            else # namespace or scope
+              items.unshift(leaf)
+            end
+          end
+
+          # puts "items #{items}"
+
+          current = current.parent
+          i += 1
+        end
+        items.compact!
+
+        return if items.empty?
+
+        items.join('/')
+      end
+
+      def full_prefix
+        items = []
+        current = self
+
+        i = 0
+        while current
+          # puts "scope current: prefix #{current.level}".color(:yellow)
+          # pp current
+
+          leaf = current.options[:prefix]
+          if leaf
+            case current.from
+            when :resources
+              unless i == 0 # since resources creates an extra layer
+                items.unshift(":#{leaf}_id")
+                items.unshift(leaf)
+              end
+            else # namespace or scope
+              items.unshift(leaf)
+            end
+          end
+
+          # puts "items #{items}"
+
+          current = current.parent
+          i += 1
+        end
+        items.compact!
+
+        return if items.empty?
+
+        items.join('/')
       end
 
       # singularize all except last item
@@ -81,17 +158,8 @@ module Jets
         result
       end
 
-      # Means the as option comes from within a resource declaration
-      #
-      #     resources :posts, as: 'images'
-      #
-      # Use this flag in the AsOption builder to disregard the @path_trunk
-      def resources?
-        @options[:resources]
-      end
-
-      def namespace?
-        @options[:namespace]
+      def from
+        @options[:from]
       end
     end
   end

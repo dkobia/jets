@@ -8,7 +8,7 @@ class Jets::Router
     end
 
     def namespace(ns, &block)
-      scope(module: ns, prefix: ns, as: ns, namespace: true, &block)
+      scope(module: ns, prefix: ns, as: ns, from: :namespace, &block)
     end
 
     # scope supports three options: module, prefix and as.
@@ -41,12 +41,14 @@ class Jets::Router
       o = {
         as: options.delete(:as) || item,
         prefix: options.delete(:prefix) || item,
-        # module: options[:module] || item,
-        resources: true, # flag we can disregard @path_trunk in AsOption class.
+        module: options.delete(:module) || item,
+        from: :resources, # flag we can disregard @path_trunk in AsOption class.
       }
-      if @scope
-        o = @scope.options.merge(o)
-      end
+      # TODO: this really chagnes the behavior!!! FIGURE THIS OUT and make sense of it
+      # THINK its better to not merge. Then we'll or else we lose info.
+      # if @scope
+      #   o = @scope.options.merge(o)
+      # end
       o
     end
 

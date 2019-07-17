@@ -18,21 +18,15 @@ class Jets::Router
     end
 
     def compute_path
-      prefix = @scope.full(:prefix)
+      prefix = @scope.full_prefix
       [prefix, @options[:path]].compact.join('/')
-
-      # [@options[:prefix], @options[:path]].compact.join('/')
     end
 
     def compute_to
       controller, action = get_controller_action(@options)
-      mod = @scope.full(:module)
+      mod = @scope.full_module
       controller = [mod, controller].compact.join('/') # add module
       "#{controller}##{action}"
-
-      # controller, action = get_controller_action(@options)
-      # controller = [@options[:module], controller].compact.join('/') # add module
-      # "#{controller}##{action}"
     end
 
     def compute_as

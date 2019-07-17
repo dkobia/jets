@@ -16,7 +16,7 @@ class Jets::Router
       # puts "as_option.rb @scope".color(:yellow)
       # pp scope
       @full_as = @scope&.full(:as)
-      @full_as.singularize if @scope.resources?
+      @full_as.singularize if @scope.from == :resources
       # puts "@full_as #{@full_as}".color(:yellow)
     end
 
