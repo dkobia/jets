@@ -36,8 +36,6 @@ class Jets::Router
     def resources(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
-        # puts "dsl.rb item #{item}".color(:yellow)
-        # puts "scope_options #{scope_options}"
         scope(scope_options) do
           resources_each(item, options, block_given?)
           yield if block_given?
@@ -46,18 +44,12 @@ class Jets::Router
     end
 
     def scope_options!(item, options)
-      o = {
+      {
         as: options.delete(:as) || item,
         prefix: options.delete(:prefix) || item,
         # module: options.delete(:module) || item, # NOTE: resources does not automatically set module, but namespace does
         from: :resources, # flag we can disregard @path_trunk in AsOption class.
       }
-      # TODO: this really chagnes the behavior!!! FIGURE THIS OUT and make sense of it
-      # THINK its better to not merge. Then we'll or else we lose info.
-      # if @scope
-      #   o = @scope.options.merge(o)
-      # end
-      o
     end
 
     def resources_each(name, options={}, has_block)
@@ -85,7 +77,6 @@ class Jets::Router
     def root(to, options={})
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
-      # TODO: define root_url helper
       HelperCreator.new(options, @scope).define_root_helper
       @routes << Route.new(options, @scope)
     end
