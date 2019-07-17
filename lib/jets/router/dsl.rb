@@ -31,7 +31,7 @@ class Jets::Router
         # puts "dsl.rb item #{item}".color(:yellow)
         # puts "scope_options #{scope_options}"
         scope(scope_options) do
-          resources_each(item, options)
+          resources_each(item, options, block_given?)
           yield if block_given?
         end
       end
@@ -46,11 +46,15 @@ class Jets::Router
       }
     end
 
-    def resources_each(name, options={})
+    def resources_each(name, options={}, has_block)
       o = Resources::Options.new(name, options)
       f = Resources::Filter.new(name, options)
 
-      param = options[:param] || :id
+      # If a block has pass then we assume the resources will be nested and then prefix
+      # the param name with the resource. IE: post_id instead of id
+      # This avoids an API Gateway parent sibling variable collision.
+      default_param = has_block ? "#{name.to_s.singularize}_id".to_sym : :id
+      param = options[:param] || default_param
 
       get "#{name}", o.build(:index) if f.yes?(:index)
       get "#{name}/new", o.build(:new) if f.yes?(:new) && !api_mode?

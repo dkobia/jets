@@ -12,8 +12,6 @@ class Jets::Resource::ApiGateway::RestApi::Routes
 
       collide = false
       parents.each do |parent|
-        puts "parent: #{parent}"
-        puts "paths #{paths}"
         collide ||= variable_collision_exists?(parent, paths)
       end
       collide

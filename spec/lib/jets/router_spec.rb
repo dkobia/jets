@@ -6,9 +6,15 @@ describe Jets::Router do
       it "builds up routes in memory" do
         # uses fixtures/apps/demo/config/routes.rb
         router.draw do
-          resources :posts, param: :post_id do
+          # resources :posts
+
+          resources :posts do
             resources :comments#, only: [:index, :edit]
           end
+
+          # resources :posts, param: :post_id do
+          #   resources :comments#, only: [:index, :edit]
+          # end
         end
         # pp router.routes
 

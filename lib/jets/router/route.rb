@@ -36,9 +36,7 @@ class Jets::Router
     end
 
     def compute_as
-      as = AsOption.new(@options, @scope).build
-      puts "as #{as}"
-      as
+      AsOption.new(@options, @scope).build
     end
 
     # IE: standard: posts/:id/edit

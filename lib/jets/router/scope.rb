@@ -39,8 +39,6 @@ module Jets
           items = items[0..-3] || [] if resources?
         end
 
-        puts "items: #{items.inspect}"
-
         return if items.empty?
 
         if option_name == :as
