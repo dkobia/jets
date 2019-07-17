@@ -25,7 +25,13 @@ class Jets::Router
     end
 
     # resources macro expands to all the routes
-    def resources(name, options={})
+    def resources(*items, **options)
+      items.each do |item|
+        resources_each(item, options)
+      end
+    end
+
+    def resources_each(name, options={})
       options = ResourcesOptions.new(name, options)
 
       get "#{name}", options.build(:index)
