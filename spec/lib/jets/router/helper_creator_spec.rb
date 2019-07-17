@@ -3,8 +3,9 @@ class HelperCreaterView
 end
 
 describe Jets::Router::HelperCreator do
-  let(:creator) { Jets::Router::HelperCreator.new(options) }
+  let(:creator) { Jets::Router::HelperCreator.new(options, scope) }
   let(:view)    { HelperCreaterView.new }
+  let(:scope)   { Jets::Router::Scope.new }
 
   context "top-level" do
     context "posts_path" do
@@ -145,7 +146,7 @@ describe Jets::Router::HelperCreator do
   # scope prefix: "api/v1" do
   #   get "posts", to "posts#index"
   # end
-  context "scope api/v1" do
+  context "scope prefix" do
     context "posts_path" do
       let(:options) do
         { to: "posts#index", path: "posts", method: :get, prefix: "api/v1" }
@@ -190,7 +191,7 @@ describe Jets::Router::HelperCreator do
   # scope module: "api/v1" do
   #   get "posts", to "posts#index"
   # end
-  context "scope api/v1" do
+  context "scope module" do
     context "posts_path" do
       let(:options) do
         { to: "posts#index", path: "posts", method: :get, module: "api/v1" }
@@ -235,7 +236,7 @@ describe Jets::Router::HelperCreator do
   # scope as: "api/v1" do
   #   get "posts", to "posts#index"
   # end
-  context "scope api/v1" do
+  context "scope as" do
     context "api_v1_posts_path" do
       let(:options) do
         { to: "posts#index", path: "posts", method: :get, as: "api_v1_posts" }
