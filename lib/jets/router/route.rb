@@ -19,8 +19,9 @@ class Jets::Router
 
     def compute_to
       controller, action = @options[:to].split('#')
-      full_controller = [@options[:module], controller].compact.join('/')
-      "#{full_controller}##{action}"
+      controller = [@options[:module], controller].compact.join('/') # add module
+      controller = @options[:controller] if @options[:controller] # overrides if user specifies
+      "#{controller}##{action}"
     end
 
     # IE: standard: posts/:id/edit
