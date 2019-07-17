@@ -5,7 +5,7 @@ class Jets::Router
     def initialize(options)
       @options = options
 
-      @meth, @path, @to, @prefix = @options[:method], @options[:path], @options[:to], @options[:prefix]
+      @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
       @action = @to.split('#').last
 
       @path_trunk = @path.split('/').first # posts/new -> posts
@@ -22,24 +22,24 @@ class Jets::Router
     end
 
     def index
-      join(@prefix, @path_trunk)
+      join(@as, @path_trunk)
     end
 
     def new
-      join(@action, @prefix, @path_trunk.singularize)
+      join(@action, @as, @path_trunk.singularize)
     end
 
     def show
-      join(@prefix, @path_trunk.singularize)
+      join(@as, @path_trunk.singularize)
     end
 
     def edit
-      join(@action, @prefix, @path_trunk.singularize)
+      join(@action, @as, @path_trunk.singularize)
     end
 
     # TODO: is this the convention we want? Like it because it is simple
     def stock_get
-      join(@action, @prefix, @path_trunk)
+      join(@action, @as, @path_trunk)
     end
   end
 end

@@ -1,6 +1,8 @@
 module Jets
   class Router
     class Scope
+      include Util
+
       attr_reader :options, :parent, :level
       def initialize(options = {}, parent = nil, level = 1)
         @options = options
@@ -14,14 +16,6 @@ module Jets
 
       def new(options={})
         self.class.new(options, self, level + 1)
-      end
-
-      def full_module
-        full(:module)
-      end
-
-      def full_prefix
-        full(:prefix)
       end
 
       def full(option_name)

@@ -2,23 +2,21 @@ class Jets::Router
   class HelperCreator
     include Util
 
-    def initialize(options, helper_module=nil)
+    def initialize(options)
       @options = options
 
-      @meth, @path, @to = @options[:method], @options[:path], @options[:to]
+      @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
       @prefix, @as = @options[:prefix], @options[:as]
 
       @controller, @action = @to.split('#')
       @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
       @path_trunk = @path.split('/').first # posts/new -> posts
 
-      @helper_module = helper_module || Jets::RoutesHelper
-
       @as_option = AsOption.new(options)
     end
 
     def def_meth(str)
-      @helper_module.class_eval(str)
+      Jets::RoutesHelper.class_eval(str)
     end
 
     # Examples:

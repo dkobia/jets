@@ -25,8 +25,8 @@ module Jets
     def create_route(options)
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
-      options[:module] = options[:module] || @scope&.full_module
-      options[:prefix] = options[:prefix] || @scope&.full_prefix
+      options[:module] = options[:module] || @scope&.full(:module)
+      options[:prefix] = options[:prefix] || @scope&.full(:prefix)
       options[:as] = options[:as] || build_as(options) # call after prefix option set
 
       HelperCreator.new(options).define_url_helper!
@@ -34,7 +34,8 @@ module Jets
     end
 
     def build_as(options)
-      AsOption.new(options).build
+      as = @scope&.full(:as)
+      AsOption.new(options.merge(as: as)).build
     end
 
     def api_mode?
