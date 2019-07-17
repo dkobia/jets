@@ -17,7 +17,7 @@ class Jets::Router
       # pp scope
       @full_as = @scope&.full(:as)
       @full_as.singularize if @scope.resources?
-      puts "@full_as #{@full_as}".color(:yellow)
+      # puts "@full_as #{@full_as}".color(:yellow)
     end
 
     def build

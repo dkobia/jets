@@ -34,7 +34,6 @@ module Jets
         items.compact!
 
         # TODO: REMOVE THIS MESSY DUPLICATION
-        puts "@options.inspect #{@options.inspect}"
         if option_name == :prefix
           if namespace?
             items = items[0..-2] || []
@@ -53,8 +52,6 @@ module Jets
         end
 
         return if items.empty?
-
-        puts "items #{items}"
 
         if option_name == :as
           items = singularize_leading(items)

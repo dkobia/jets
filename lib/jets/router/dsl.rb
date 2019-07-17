@@ -28,8 +28,8 @@ class Jets::Router
     def resources(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
-        puts "dsl.rb item #{item}".color(:yellow)
-        puts "scope_options #{scope_options}"
+        # puts "dsl.rb item #{item}".color(:yellow)
+        # puts "scope_options #{scope_options}"
         scope(scope_options) do
           resources_each(item, options, block_given?)
           yield if block_given?
