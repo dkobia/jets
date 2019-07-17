@@ -25,16 +25,18 @@ class Jets::Router
     end
 
     # resources macro expands to all the routes
-    def resources(name)
-      get "#{name}", to: "#{name}#index"
-      get "#{name}/new", to: "#{name}#new" unless api_mode?
-      get "#{name}/:id", to: "#{name}#show"
-      post "#{name}", to: "#{name}#create"
-      get "#{name}/:id/edit", to: "#{name}#edit" unless api_mode?
-      put "#{name}/:id", to: "#{name}#update"
-      post "#{name}/:id", to: "#{name}#update" # for binary uploads
-      patch "#{name}/:id", to: "#{name}#update"
-      delete "#{name}/:id", to: "#{name}#delete"
+    def resources(name, options={})
+      options = ResourcesOptions.new(name, options)
+
+      get "#{name}", options.build(:index)
+      get "#{name}/new", options.build(:new) unless api_mode?
+      get "#{name}/:id", options.build(:show)
+      post "#{name}", options.build(:create)
+      get "#{name}/:id/edit", options.build(:edit) unless api_mode?
+      put "#{name}/:id", options.build(:update)
+      post "#{name}/:id", options.build(:update) # for binary uploads
+      patch "#{name}/:id", options.build(:update)
+      delete "#{name}/:id", options.build(:delete)
     end
 
     # root "posts#index"
