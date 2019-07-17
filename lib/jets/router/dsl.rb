@@ -16,7 +16,14 @@ class Jets::Router
     #   module - module
     #   prefix - path
     #   as - as
-    def scope(options={})
+    def scope(args)
+      options = case args
+      when Hash
+        args
+      when String, Symbol
+        { prefix: args }
+      end
+
       root_level = @scope.nil?
       @scope = root_level ? Scope.new(options) : @scope.new(options)
       yield

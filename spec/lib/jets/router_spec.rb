@@ -215,20 +215,32 @@ EOL
 EOL
         expect(output).to eq(table)
       end
-    end
 
-#######################################################################
+      it "standalone routes" do
+        router.draw do
+          any "comments/hot", to: "comments#hot"
+          get "landing/posts", to: "posts#index"
+          get "admin/pages", to: "admin/pages#index"
+          get "related_posts/:id", to: "related_posts#show"
+          any "others/*proxy", to: "others#catchall"
+        end
 
-    context "main test project" do
-      # it "draw class method" do
-      #   router = Jets::Router.draw
-      #   expect(router).to be_a(Jets::Router)
-      #   expect(router.routes).to be_a(Array)
-      #   expect(router.routes.first).to be_a(Jets::Router::Route)
-      # end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------+------+-------------------+--------------------+
+|      As      | Verb |       Path        | Controller#action  |
++--------------+------+-------------------+--------------------+
+|              | ANY  | comments/hot      | comments#hot       |
+| landing      | GET  | landing/posts     | posts#index        |
+| admin        | GET  | admin/pages       | admin/pages#index  |
+| related_post | GET  | related_posts/:id | related_posts#show |
+|              | ANY  | others/*proxy     | others#catchall    |
++--------------+------+-------------------+--------------------+
+EOL
+        expect(output).to eq(table)
+      end
 
       it "builds up routes in memory" do
-        # uses fixtures/apps/demo/config/routes.rb
         router.draw do
           resources :articles
           resources :posts
@@ -453,5 +465,111 @@ EOL
         expect(route.path).to eq "api/v2/posts"
       end
     end
+
+    # context "main test project" do
+    #   it "draw class method" do
+    #     router = Jets::Router.draw
+    #     expect(router).to be_a(Jets::Router)
+    #     expect(router.routes).to be_a(Array)
+    #     expect(router.routes.first).to be_a(Jets::Router::Route)
+    #   end
+    # end
+
+    context "scope with prefix" do
+      it "single admin prefix" do
+        router.draw do
+          scope(prefix: :admin) do
+            get "posts", to: "posts#index"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+-------------+-------------------+
+|  As   | Verb |    Path     | Controller#action |
++-------+------+-------------+-------------------+
+| posts | GET  | admin/posts | posts#index       |
++-------+------+-------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+
+      it "nested admin prefix on multiple lines" do
+        router.draw do
+          scope(prefix: :v1) do
+            scope(prefix: :admin) do
+              get "posts", to: "posts#index"
+            end
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+----------------+-------------------+
+|  As   | Verb |      Path      | Controller#action |
++-------+------+----------------+-------------------+
+| posts | GET  | v1/admin/posts | posts#index       |
++-------+------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+
+      it "nested admin prefix on oneline" do
+        router.draw do
+          scope(prefix: :v1) do
+            scope(prefix: :admin) do
+              get "posts", to: "posts#index"
+            end
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+----------------+-------------------+
+|  As   | Verb |      Path      | Controller#action |
++-------+------+----------------+-------------------+
+| posts | GET  | v1/admin/posts | posts#index       |
++-------+------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+
+      it "nested admin prefix as string" do
+        router.draw do
+          scope "v1/admin" do
+            get "posts", to: "posts#index"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+----------------+-------------------+
+|  As   | Verb |      Path      | Controller#action |
++-------+------+----------------+-------------------+
+| posts | GET  | v1/admin/posts | posts#index       |
++-------+------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+
+      it "nested admin prefix as symbol" do
+        router.draw do
+          scope :admin do
+            get "posts", to: "posts#index"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------+------+-------------+-------------------+
+|  As   | Verb |    Path     | Controller#action |
++-------+------+-------------+-------------------+
+| posts | GET  | admin/posts | posts#index       |
++-------+------+-------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+    end
+
   end
 end
