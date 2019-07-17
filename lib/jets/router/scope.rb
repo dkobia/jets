@@ -118,7 +118,7 @@ module Jets
             case current.from
             when :resources
               unless i == 0 # since resources creates an extra layer
-                items.unshift(":#{leaf}_id")
+                items.unshift(":#{leaf.to_s.singularize}_id")
                 items.unshift(leaf)
               end
             else # namespace or scope

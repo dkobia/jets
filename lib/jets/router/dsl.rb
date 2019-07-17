@@ -41,7 +41,7 @@ class Jets::Router
       o = {
         as: options.delete(:as) || item,
         prefix: options.delete(:prefix) || item,
-        module: options.delete(:module) || item,
+        # module: options.delete(:module) || item, # NOTE: resources does not automatically set module, but namespace does
         from: :resources, # flag we can disregard @path_trunk in AsOption class.
       }
       # TODO: this really chagnes the behavior!!! FIGURE THIS OUT and make sense of it
