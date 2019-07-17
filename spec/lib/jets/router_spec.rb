@@ -59,8 +59,6 @@ EOL
 +-------------------+--------+----------------------------------+-------------------+
 EOL
         expect(output).to eq(table)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
       end
     end
 
@@ -89,8 +87,6 @@ EOL
 +-----------------+--------+----------------------+--------------------+
 EOL
         expect(output).to eq(table)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
       end
     end
 
@@ -132,8 +128,6 @@ EOL
 +----------------------------+--------+-------------------------------------------+--------------------------+
 EOL
         expect(output).to eq(table)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
       end
     end
 
@@ -173,8 +167,6 @@ EOL
 +----------------------------+--------+-------------------------------------------+--------------------------+
 EOL
         expect(output).to eq(table)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
       end
     end
 
@@ -222,8 +214,6 @@ EOL
 +-------------------+--------+---------------------------------------------+-------------------+
 EOL
         expect(output).to eq(table)
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
       end
     end
 
@@ -249,14 +239,37 @@ EOL
           any "others/*proxy", to: "others#catchall"
         end
 
-        expect(router.routes).to be_a(Array)
-        expect(router.routes.first).to be_a(Jets::Router::Route)
-
-        # router.routes.each do |route|
-        #   puts "route.controller_name #{route.controller_name.inspect}"
-        #   puts "route.action_name #{route.action_name.inspect}"
-        # end
-        # pp Jets::Router.routes
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------+--------+-------------------+--------------------+
+|      As      |  Verb  |       Path        | Controller#action  |
++--------------+--------+-------------------+--------------------+
+| articles     | GET    | articles          | articles#index     |
+| new_article  | GET    | articles/new      | articles#new       |
+| article      | GET    | articles/:id      | articles#show      |
+|              | POST   | articles          | articles#create    |
+| edit_article | GET    | articles/:id/edit | articles#edit      |
+|              | PUT    | articles/:id      | articles#update    |
+|              | POST   | articles/:id      | articles#update    |
+|              | PATCH  | articles/:id      | articles#update    |
+|              | DELETE | articles/:id      | articles#delete    |
+| posts        | GET    | posts             | posts#index        |
+| new_post     | GET    | posts/new         | posts#new          |
+| post         | GET    | posts/:id         | posts#show         |
+|              | POST   | posts             | posts#create       |
+| edit_post    | GET    | posts/:id/edit    | posts#edit         |
+|              | PUT    | posts/:id         | posts#update       |
+|              | POST   | posts/:id         | posts#update       |
+|              | PATCH  | posts/:id         | posts#update       |
+|              | DELETE | posts/:id         | posts#delete       |
+|              | ANY    | comments/hot      | comments#hot       |
+| landing      | GET    | landing/posts     | posts#index        |
+| admin        | GET    | admin/pages       | admin/pages#index  |
+| related_post | GET    | related_posts/:id | related_posts#show |
+|              | ANY    | others/*proxy     | others#catchall    |
++--------------+--------+-------------------+--------------------+
+EOL
+        expect(output).to eq(table)
       end
 
       it "root" do

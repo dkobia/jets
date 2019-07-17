@@ -47,6 +47,7 @@ class Jets::Router
       join(@action, @full_as, @path_trunk)
     end
 
+    # Support root under nested resources
     def root
       "root"
     end
