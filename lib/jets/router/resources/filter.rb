@@ -4,6 +4,7 @@ module Jets::Router::Resources
       return true unless @options[:only]
       only = [@options[:only]].flatten.map(&:to_s)
       only.include?(action.to_s)
+      # except
     end
   end
 end

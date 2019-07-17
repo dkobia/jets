@@ -26,9 +26,25 @@ class Jets::Router
 
     # resources macro expands to all the routes
     def resources(*items, **options)
-      items.each do |item|
-        resources_each(item, options)
+      scope_options = scope_options!(options)
+      # puts "scope_options #{scope_options}"
+      # puts "options #{options}"
+      scope(scope_options) do
+        items.each do |item|
+          resources_each(item, options)
+        end
       end
+    end
+
+    def scope_options!(options)
+      return {} unless options.key?(:as)
+
+      # Only as treated specially.
+      # Other options prefix and module straight override at the create_route level.
+      {
+        as: options.delete(:as),
+        resources: true,
+      }
     end
 
     def resources_each(name, options={})
@@ -39,7 +55,7 @@ class Jets::Router
       get "#{name}/new", o.build(:new) if f.pass?(:new) && !api_mode?
       get "#{name}/:id", o.build(:show) if f.pass?(:show)
       post "#{name}", o.build(:create) if f.pass?(:create)
-      get "#{name}/:id/edit", o.build(:edit) if f.pass?(:create) && !api_mode?
+      get "#{name}/:id/edit", o.build(:edit) if f.pass?(:edit) && !api_mode?
       put "#{name}/:id", o.build(:update) if f.pass?(:update)
       post "#{name}/:id", o.build(:update) if f.pass?(:update) # for binary uploads
       patch "#{name}/:id", o.build(:update) if f.pass?(:update)

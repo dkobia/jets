@@ -25,20 +25,23 @@ module Jets
     def create_route(options)
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
+
+      # puts "create_route #{options}"
+      # pp @scope
+
       options[:module] = options[:module] || @scope&.full(:module)
       options[:prefix] = options[:prefix] || @scope&.full(:prefix)
       # as option at create_route level overrride everything in a simple way.
       # build_as will use the scope to build the as option in a smarter way.
       options[:as] = options[:as] || build_as(options) # call after prefix option set
 
-      HelperCreator.new(options).define_url_helper!
+      HelperCreator.new(options, @scope).define_url_helper!
       @routes << Route.new(options)
     end
 
     # build as option for specific route. IE: index, new, show, edit, ...
     def build_as(options)
-      as = @scope&.full(:as)
-      AsOption.new(options.merge(as: as)).build
+      AsOption.new(options, @scope).build
     end
 
     def api_mode?

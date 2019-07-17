@@ -2,7 +2,7 @@ class Jets::Router
   class HelperCreator
     include Util
 
-    def initialize(options)
+    def initialize(options, scope)
       @options = options
 
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
@@ -12,7 +12,7 @@ class Jets::Router
       @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
       @path_trunk = @path.split('/').first # posts/new -> posts
 
-      @as_option = AsOption.new(options)
+      @as_option = AsOption.new(options, scope)
     end
 
     def def_meth(str)
