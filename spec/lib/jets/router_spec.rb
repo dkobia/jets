@@ -571,5 +571,67 @@ EOL
       end
     end
 
+    context "scope with as" do
+      it "single admin as with individual routes" do
+        router.draw do
+          scope(as: :admin) do
+            get "posts", to: "posts#index"
+            get "posts/new", to: "posts#new"
+            get "posts/:id", to: "posts#show"
+            post "posts", to: "posts#create"
+            get "posts/:id/edit", to: "posts#edit"
+            put "posts/:id", to: "posts#update"
+            post "posts/:id", to: "posts#update"
+            patch "posts/:id", to: "posts#update"
+            delete "posts/:id", to: "posts#delete"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------------+--------+----------------+-------------------+
+|       As        |  Verb  |      Path      | Controller#action |
++-----------------+--------+----------------+-------------------+
+| admin_posts     | GET    | posts          | posts#index       |
+| new_admin_post  | GET    | posts/new      | posts#new         |
+| admin_post      | GET    | posts/:id      | posts#show        |
+|                 | POST   | posts          | posts#create      |
+| edit_admin_post | GET    | posts/:id/edit | posts#edit        |
+|                 | PUT    | posts/:id      | posts#update      |
+|                 | POST   | posts/:id      | posts#update      |
+|                 | PATCH  | posts/:id      | posts#update      |
+|                 | DELETE | posts/:id      | posts#delete      |
++-----------------+--------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+
+      it "single admin as with resources" do
+        router.draw do
+          scope(as: :admin) do
+            resources :posts
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------------+--------+----------------+-------------------+
+|       As        |  Verb  |      Path      | Controller#action |
++-----------------+--------+----------------+-------------------+
+| admin_posts     | GET    | posts          | posts#index       |
+| new_admin_post  | GET    | posts/new      | posts#new         |
+| admin_post      | GET    | posts/:id      | posts#show        |
+|                 | POST   | posts          | posts#create      |
+| edit_admin_post | GET    | posts/:id/edit | posts#edit        |
+|                 | PUT    | posts/:id      | posts#update      |
+|                 | POST   | posts/:id      | posts#update      |
+|                 | PATCH  | posts/:id      | posts#update      |
+|                 | DELETE | posts/:id      | posts#delete      |
++-----------------+--------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+      end
+    end
+
   end
 end
