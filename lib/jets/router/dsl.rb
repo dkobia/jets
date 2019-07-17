@@ -32,17 +32,18 @@ class Jets::Router
     end
 
     def resources_each(name, options={})
-      options = ResourcesOptions.new(name, options)
+      o = Resources::Options.new(name, options)
+      f = Resources::Filter.new(name, options)
 
-      get "#{name}", options.build(:index)
-      get "#{name}/new", options.build(:new) unless api_mode?
-      get "#{name}/:id", options.build(:show)
-      post "#{name}", options.build(:create)
-      get "#{name}/:id/edit", options.build(:edit) unless api_mode?
-      put "#{name}/:id", options.build(:update)
-      post "#{name}/:id", options.build(:update) # for binary uploads
-      patch "#{name}/:id", options.build(:update)
-      delete "#{name}/:id", options.build(:delete)
+      get "#{name}", o.build(:index) if f.pass?(:index)
+      get "#{name}/new", o.build(:new) if f.pass?(:new) && !api_mode?
+      get "#{name}/:id", o.build(:show) if f.pass?(:show)
+      post "#{name}", o.build(:create) if f.pass?(:create)
+      get "#{name}/:id/edit", o.build(:edit) if f.pass?(:create) && !api_mode?
+      put "#{name}/:id", o.build(:update) if f.pass?(:update)
+      post "#{name}/:id", o.build(:update) if f.pass?(:update) # for binary uploads
+      patch "#{name}/:id", o.build(:update) if f.pass?(:update)
+      delete "#{name}/:id", o.build(:delete) if f.pass?(:delete)
     end
 
     # root "posts#index"
