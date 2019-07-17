@@ -33,6 +33,7 @@ module Jets
       @routes << Route.new(options)
     end
 
+    # build as option for specific route. IE: index, new, show, edit, ...
     def build_as(options)
       as = @scope&.full(:as)
       AsOption.new(options.merge(as: as)).build

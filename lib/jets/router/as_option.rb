@@ -4,10 +4,9 @@ class Jets::Router
 
     def initialize(options)
       @options = options
-
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
-      @action = @to.split('#').last
 
+      @action = @to.split('#').last
       @path_trunk = @path.split('/').first # posts/new -> posts
     end
 
