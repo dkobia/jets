@@ -7,6 +7,7 @@ module Jets
     attr_reader :routes
     def initialize
       @routes = []
+      @scope = Scope.new
     end
 
     def draw(&block)
@@ -26,22 +27,11 @@ module Jets
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
 
-      # puts "create_route #{options}"
-      # pp @scope
-
-      options[:module] = options[:module] || @scope&.full(:module)
-      options[:prefix] = options[:prefix] || @scope&.full(:prefix)
-      # as option at create_route level overrride everything in a simple way.
-      # build_as will use the scope to build the as option in a smarter way.
-      options[:as] = options[:as] || build_as(options) # call after prefix option set
-
+      if options[:resources]
+        options.slice!(:as, :module, :prefix)
+      end
       HelperCreator.new(options, @scope).define_url_helper!
-      @routes << Route.new(options)
-    end
-
-    # build as option for specific route. IE: index, new, show, edit, ...
-    def build_as(options)
-      AsOption.new(options, @scope).build
+      @routes << Route.new(options, @scope)
     end
 
     def api_mode?
@@ -125,14 +115,13 @@ module Jets
       drawn_router.all_paths
     end
 
-    def self.routes_help
+    def self.help(routes)
       return "Your routes table is empty." if routes.empty?
 
       table = Text::Table.new
-      table.head = %w[Prefix Verb Path Controller#action]
+      table.head = %w[As Verb Path Controller#action]
       routes.each do |route|
-        prefix = route.as # not a typo
-        table.rows << [prefix, route.method, route.path, route.to]
+        table.rows << [route.as, route.method, route.path, route.to]
       end
       table
     end

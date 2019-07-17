@@ -9,20 +9,36 @@ class Jets::Router
 
     CAPTURE_REGEX = "([^/]*)" # as string
 
-    def initialize(options)
-      @options = options
+    attr_reader :to, :as
+    def initialize(options, scope)
+      @options, @scope = options, scope
       @path = compute_path
       @to = compute_to
+      @as = compute_as
     end
 
     def compute_path
-      [@options[:prefix], @options[:path]].compact.join('/')
+      prefix = @scope.full(:prefix)
+      [prefix, @options[:path]].compact.join('/')
+
+      # [@options[:prefix], @options[:path]].compact.join('/')
     end
 
     def compute_to
       controller, action = get_controller_action(@options)
-      controller = [@options[:module], controller].compact.join('/') # add module
+      mod = @scope.full(:module)
+      controller = [mod, controller].compact.join('/') # add module
       "#{controller}##{action}"
+
+      # controller, action = get_controller_action(@options)
+      # controller = [@options[:module], controller].compact.join('/') # add module
+      # "#{controller}##{action}"
+    end
+
+    def compute_as
+      as = AsOption.new(@options, @scope).build
+      puts "as #{as}"
+      as
     end
 
     # IE: standard: posts/:id/edit
@@ -40,15 +56,6 @@ class Jets::Router
 
     def method
       @options[:method].to_s.upcase
-    end
-
-    # IE: posts#index
-    def to
-      @to
-    end
-
-    def as
-      @options[:as]
     end
 
     def internal?

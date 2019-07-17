@@ -12,6 +12,8 @@ class Jets::Resource::ApiGateway::RestApi::Routes
 
       collide = false
       parents.each do |parent|
+        puts "parent: #{parent}"
+        puts "paths #{paths}"
         collide ||= variable_collision_exists?(parent, paths)
       end
       collide
@@ -39,7 +41,9 @@ class Jets::Resource::ApiGateway::RestApi::Routes
 
     def variable_collision_exists?(parent, paths)
       paths = paths_with_variables(paths)
+      # puts "paths #{paths}".color(:yellow)
       variables = parent_variables(parent, paths)
+      # puts "variables #{variables}".color(:yellow)
       collide = variables.uniq.size > 1
       register_collision(parent, variables) if collide
       collide
@@ -62,7 +66,7 @@ class Jets::Resource::ApiGateway::RestApi::Routes
       end
       paths.map do |path|
         path.sub("#{parent}/",'').gsub(%r{/.*},'')
-      end.uniq.sort
+      end.select { |x| x =~ /^:/ }.uniq.sort
     end
 
     def parent?(parent, path)

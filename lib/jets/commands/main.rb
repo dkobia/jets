@@ -51,7 +51,7 @@ module Jets::Commands
     desc "routes", "Print out your application routes"
     long_desc Help.text(:routes)
     def routes
-      puts Jets::Router.routes_help
+      puts Jets::Router.help(Jets::Router.routes)
       # puts(Jets::RoutesHelper.public_instance_methods - Object.methods)
     end
 

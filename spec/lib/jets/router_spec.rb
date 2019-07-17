@@ -2,6 +2,23 @@ describe Jets::Router do
   let(:router) { Jets::Router.new }
 
   describe "Router" do
+    context "simple" do
+      it "builds up routes in memory" do
+        # uses fixtures/apps/demo/config/routes.rb
+        router.draw do
+          resources :posts, param: :post_id do
+            resources :comments#, only: [:index, :edit]
+          end
+        end
+        # pp router.routes
+
+        puts Jets::Router.help(router.routes)
+
+        # expect(router.routes).to be_a(Array)
+        # expect(router.routes.first).to be_a(Jets::Route)
+      end
+    end
+
     context "main test project" do
       it "draw class method" do
         router = Jets::Router.draw

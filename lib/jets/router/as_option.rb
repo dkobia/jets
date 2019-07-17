@@ -9,17 +9,11 @@ class Jets::Router
 
       @controller, @action = get_controller_action(options)
 
-      # @scope.resources? means the as option comes from within a resource declaration
-      #
-      #     resources :posts, as: 'images'
-      #
-      # Use this flag in the AsOption builder to disregard the @path_trunk
-      #
-      # Else we get the @path_trunk from the @path
-      #
-      #     posts/new -> posts
-      @path_trunk = @path.split('/').first unless @scope.resources?
+      # puts "as_option.rb @scope".color(:yellow)
+      # pp scope
       @full_as = @scope&.full(:as)
+      @full_as.singularize if @scope.resources?
+      # puts "@full_as #{@full_as}".color(:yellow)
     end
 
     def build
@@ -33,24 +27,24 @@ class Jets::Router
     end
 
     def index
-      join(@full_as, @path_trunk)
+      join(@full_as)
     end
 
     def new
-      join(@action, @full_as, @path_trunk&.singularize)
+      join(@action, @full_as.singularize)
     end
 
     def show
-      join(@full_as, @path_trunk&.singularize)
+      join(@full_as.singularize)
     end
 
     def edit
-      join(@action, @full_as, @path_trunk&.singularize)
+      join(@action, @full_as.singularize)
     end
 
     # TODO: is this the convention we want? Like it because it is simple
     def stock_get
-      join(@action, @full_as, @path_trunk)
+      join(@action, @full_as)
     end
   end
 end

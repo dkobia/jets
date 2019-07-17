@@ -32,7 +32,43 @@ module Jets
           current = current.parent
         end
         items.compact!
-        items.empty? ? nil : items.join('/')
+
+
+        if option_name == :prefix
+          items = expand_items(items)
+          items = items[0..-3] || [] if resources?
+        end
+
+        puts "items: #{items.inspect}"
+
+        return if items.empty?
+
+        if option_name == :as
+          items = singularize_leading(items)
+          items.join('_')
+        else
+          items.join('/')
+        end
+      end
+
+      # singularize all except last item
+      def singularize_leading(items)
+        result = []
+        items.each_with_index do |item, index|
+          item = item.to_s
+          r = index == items.size - 1 ? item : item.singularize
+          result << r
+        end
+        result
+      end
+
+      def expand_items(items)
+        result = []
+        items.each do |i|
+          result << i
+          result << ":#{i.to_s.singularize}_id"
+        end
+        result
       end
 
       # Means the as option comes from within a resource declaration

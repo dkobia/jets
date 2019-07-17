@@ -26,24 +26,23 @@ class Jets::Router
 
     # resources macro expands to all the routes
     def resources(*items, **options)
-      scope_options = scope_options!(options)
-      # puts "scope_options #{scope_options}"
-      # puts "options #{options}"
-      scope(scope_options) do
-        items.each do |item|
+      items.each do |item|
+        scope_options = scope_options!(item, options)
+        # puts "dsl.rb item #{item}".color(:yellow)
+        # puts "scope_options #{scope_options}"
+        scope(scope_options) do
           resources_each(item, options)
+          yield if block_given?
         end
       end
     end
 
-    def scope_options!(options)
-      return {} unless options.key?(:as)
-
-      # Only as treated specially.
-      # Other options prefix and module straight override at the create_route level.
+    def scope_options!(item, options)
       {
-        as: options.delete(:as),
-        resources: true,
+        as: options[:as] || item,
+        prefix: options[:prefix] || item,
+        # module: options[:module] || item,
+        resources: true, # flag we can disregard @path_trunk in AsOption class.
       }
     end
 
@@ -51,15 +50,17 @@ class Jets::Router
       o = Resources::Options.new(name, options)
       f = Resources::Filter.new(name, options)
 
-      get "#{name}", o.build(:index) if f.pass?(:index)
-      get "#{name}/new", o.build(:new) if f.pass?(:new) && !api_mode?
-      get "#{name}/:id", o.build(:show) if f.pass?(:show)
-      post "#{name}", o.build(:create) if f.pass?(:create)
-      get "#{name}/:id/edit", o.build(:edit) if f.pass?(:edit) && !api_mode?
-      put "#{name}/:id", o.build(:update) if f.pass?(:update)
-      post "#{name}/:id", o.build(:update) if f.pass?(:update) # for binary uploads
-      patch "#{name}/:id", o.build(:update) if f.pass?(:update)
-      delete "#{name}/:id", o.build(:delete) if f.pass?(:delete)
+      param = options[:param] || :id
+
+      get "#{name}", o.build(:index) if f.yes?(:index)
+      get "#{name}/new", o.build(:new) if f.yes?(:new) && !api_mode?
+      get "#{name}/:#{param}", o.build(:show) if f.yes?(:show)
+      post "#{name}", o.build(:create) if f.yes?(:create)
+      get "#{name}/:#{param}/edit", o.build(:edit) if f.yes?(:edit) && !api_mode?
+      put "#{name}/:#{param}", o.build(:update) if f.yes?(:update)
+      post "#{name}/:#{param}", o.build(:update) if f.yes?(:update) # for binary uploads
+      patch "#{name}/:#{param}", o.build(:update) if f.yes?(:update)
+      delete "#{name}/:#{param}", o.build(:delete) if f.yes?(:delete)
     end
 
     # root "posts#index"
