@@ -9,6 +9,18 @@ class Jets::Router
 
     def initialize(options)
       @options = options
+      @path = compute_path
+      @to = compute_to
+    end
+
+    def compute_path
+      [@options[:prefix], @options[:path]].compact.join('/')
+    end
+
+    def compute_to
+      controller, action = @options[:to].split('#')
+      full_controller = [@options[:module], controller].compact.join('/')
+      "#{full_controller}##{action}"
     end
 
     # IE: standard: posts/:id/edit
@@ -16,11 +28,11 @@ class Jets::Router
     def path(format=:jets)
       case format
       when :api_gateway
-        api_gateway_format(@options[:path])
+        api_gateway_format(@path)
       when :raw
-        @options[:path]
+        @path
       else # jets format
-        ensure_jets_format(@options[:path])
+        ensure_jets_format(@path)
       end
     end
 
@@ -30,7 +42,7 @@ class Jets::Router
 
     # IE: posts#index
     def to
-      @options[:to]
+      @to
     end
 
     def as

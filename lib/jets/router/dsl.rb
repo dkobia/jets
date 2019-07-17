@@ -12,9 +12,9 @@ class Jets::Router
     end
 
     # scope supports three options: module, prefix and as.
-    # Rails vs Jets:
+    # Jets vs Rails:
     #   module - module
-    #   path - prefix
+    #   prefix - path
     #   as - as
     def scope(options={})
       root_level = @scope.nil?
