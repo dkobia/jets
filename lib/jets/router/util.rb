@@ -8,7 +8,7 @@ class Jets::Router
 
     def underscore(str)
       return unless str
-      str.gsub('-','_').gsub('/','_')
+      str.to_s.gsub('-','_').gsub('/','_')
     end
   end
 end
