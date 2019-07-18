@@ -11,7 +11,7 @@ class Jets::Router::MethodCreator
 
     def meth_result
       index = Index.new(@options, @scope, @action)
-      index.meth_result + '/new'
+      [index.meth_result, 'new'].compact.join('/')
     end
   end
 end

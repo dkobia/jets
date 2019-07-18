@@ -22,6 +22,9 @@ class Jets::Router::MethodCreator
     end
 
     def meth_result
+      puts "@scope index".color(:cyan)
+      pp @scope
+
       items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
         next unless prefix

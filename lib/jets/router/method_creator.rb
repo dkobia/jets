@@ -4,19 +4,14 @@ class Jets::Router
 
     def initialize(options, scope)
       @options, @scope = options, scope
-
-      @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
-      @prefix, @as = @options[:prefix], @options[:as]
-
-      _, @action = get_controller_action(options)
-      @path_trunk = @path.split('/').first # posts/new -> posts
     end
 
     def define_url_helper!
-      return unless @meth == :get
+      return unless @options[:method] == :get
 
-      if %w[index new show edit].include?(@action)
-        create_method(@action)
+      _, action = get_controller_action(@options)
+      if %w[index new show edit].include?(action)
+        create_method(action)
       else
         create_method("generic")
       end
@@ -37,8 +32,8 @@ class Jets::Router
       class_name = "Jets::Router::MethodCreator::#{action.camelize}"
       klass = class_name.constantize # Index, Show, Edit, New
       code = klass.new(@options, @scope)
-      # puts "define_#{action}_method:".color(:yellow)
-      # puts code.path_method.color(:blue)
+      puts "define_#{action}_method:".color(:yellow)
+      puts code.path_method.color(:blue)
       def_meth code.path_method
     end
 
@@ -47,7 +42,7 @@ class Jets::Router
       as = @options[:as] || "root"
       name = underscore("#{as}_path")
 
-      result = [@prefix, @path].compact.join('/')
+      result = @options[:path]
       def_meth <<~EOL
         def #{name}
           "/#{result}"
