@@ -5,6 +5,10 @@ class Jets::Router
     def initialize(options, scope)
       @options = options
 
+      # puts "helper_creator.rb @options #{@options}"
+      # puts "helper_creator.rb scope:"
+      # pp scope
+
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
       @prefix, @as = @options[:prefix], @options[:as]
 
@@ -61,7 +65,7 @@ class Jets::Router
           "#{meth_result}"
         end
       EOL
-      # puts code
+      puts code
       def_meth code
     end
 

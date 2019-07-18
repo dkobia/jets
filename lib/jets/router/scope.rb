@@ -73,11 +73,10 @@ module Jets
         items = []
         current = self
         while current
-          # puts "scope.rb current as #{current.level} #{current}".color(:yellow)
-          # pp current
           items.unshift(current.options[:as]) # <= option_name
           current = current.parent
         end
+
         items.compact!
         return if items.empty?
 

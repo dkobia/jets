@@ -1,5 +1,10 @@
+class RouterTestApp
+  include Jets::RoutesHelper
+end
+
 describe Jets::Router do
   let(:router) { Jets::Router.new }
+  let(:app)    { RouterTestApp.new }
 
   describe "Router" do
     context "nested resources some" do
@@ -22,6 +27,9 @@ EOL
         expect(output).to eq(table)
         expect(router.routes).to be_a(Array)
         expect(router.routes.first).to be_a(Jets::Router::Route)
+
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.edit_post_comment_path(:a, :b)).to eq("/posts/a/comments/b/edit")
       end
     end
 
@@ -634,8 +642,8 @@ EOL
     end
 
     # useful for debugging code
-    context "simple" do
-      it "routes" do
+    context "simple routes" do
+      it "post_comment" do
         router.draw do
           resources :posts, only: [] do
             resources :comments, only: :show
@@ -643,10 +651,37 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------+------+-----------------------------+-------------------+
+|      As      | Verb |            Path             | Controller#action |
++--------------+------+-----------------------------+-------------------+
+| post_comment | GET  | posts/:post_id/comments/:id | comments#show     |
++--------------+------+-----------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        path = app.post_comment_path(:a, :b)
+        expect(path).to eq("/posts/a/comments/b")
+      end
+
+      it "post_comment" do
+        router.draw do
+          resources :posts
+        end
+
+        output = Jets::Router.help(router.routes).to_s
         puts output
         table =<<EOL
++--------------+------+-----------------------------+-------------------+
+|      As      | Verb |            Path             | Controller#action |
++--------------+------+-----------------------------+-------------------+
+| post_comment | GET  | posts/:post_id/comments/:id | comments#show     |
++--------------+------+-----------------------------+-------------------+
 EOL
         # expect(output).to eq(table)
+
+        path = app.post_comment_path(:a, :b)
+        expect(path).to eq("/posts/a/comments/b")
       end
     end
   end

@@ -40,14 +40,17 @@ class Jets::Router
 
     def show_args
       items = @scope.full_as_meth_args
+      return unless items
       "("+items.join(', ')+")"
     end
 
     def show_result
       items = @scope.full_as_meth_args
-      items.map do |x|
+      return unless items
+      result = items.map do |x|
         "#{x}/\#{#{x}.to_param}"
       end.join('/')
+      "/#{result}"
     end
 
     def edit

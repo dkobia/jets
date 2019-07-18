@@ -289,6 +289,30 @@ describe Jets::Router::HelperCreator do
   end
 
   context "resources" do
+    let(:options) do
+      { to: "comments#show", path: "comments/:id", method: :get}
+    end
+    # The scope is below is created from the routes below:
+    #
+    #     resources :posts, only: [] do
+    #       resources :comments, only: :show
+    #     end
+    #
+    # It's pretty tedious to spec named routes helper methods like this so they are tested by
+    # building a entire route itself in router_spec.rb.
+    #
+    # This spec is helpful to see the internal structure.
+    #
+    let(:scope) do
+      parent = Jets::Router::Scope.new
+      s2 = Jets::Router::Scope.new({:as=>:posts, :prefix=>:posts, :from=>:resources}, parent, 2)
+      s3 = Jets::Router::Scope.new({:as=>:comments, :prefix=>:comments, :from=>:resources}, s2, 3)
+      s3
+    end
+    it "method" do
+      creator.define_url_helper!
+      expect(view.post_comment_path(:a, :b)).to eq "/posts/a/comments/b"
+    end
   end
 end
 
