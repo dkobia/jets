@@ -457,7 +457,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 +-----------+--------+----------------+--------------------+
 |    As     |  Verb  |      Path      | Controller#action  |
@@ -511,7 +510,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 +-----------+--------+----------------+---------------------+
 |    As     |  Verb  |      Path      |  Controller#action  |

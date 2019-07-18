@@ -55,22 +55,49 @@ class Jets::Router
     def resources_each(name, options={}, has_block)
       o = Resources::Options.new(name, options)
       f = Resources::Filter.new(name, options)
+      param = default_param(has_block, name, options)
 
-      # If a block has pass then we assume the resources will be nested and then prefix
-      # the param name with the resource. IE: post_id instead of id
-      # This avoids an API Gateway parent sibling variable collision.
-      default_param = has_block ? "#{name.to_s.singularize}_id".to_sym : :id
-      param = options[:param] || default_param
-
-      get "#{name}", o.build(:index) if f.yes?(:index)
+      get name, o.build(:index) if f.yes?(:index)
       get "#{name}/new", o.build(:new) if f.yes?(:new) && !api_mode?
       get "#{name}/:#{param}", o.build(:show) if f.yes?(:show)
-      post "#{name}", o.build(:create) if f.yes?(:create)
+      post name, o.build(:create) if f.yes?(:create)
       get "#{name}/:#{param}/edit", o.build(:edit) if f.yes?(:edit) && !api_mode?
       put "#{name}/:#{param}", o.build(:update) if f.yes?(:update)
       post "#{name}/:#{param}", o.build(:update) if f.yes?(:update) # for binary uploads
       patch "#{name}/:#{param}", o.build(:update) if f.yes?(:update)
       delete "#{name}/:#{param}", o.build(:delete) if f.yes?(:delete)
+    end
+
+    def resource(*items, **options)
+      items.each do |item|
+        scope_options = scope_options!(item, options)
+        scope(scope_options) do
+          resource_each(item, options, block_given?)
+          yield if block_given?
+        end
+      end
+    end
+
+    def resource_each(name, options={}, has_block)
+      o = Resources::Options.new(name, options.merge(singular_resource: true))
+      f = Resources::Filter.new(name, options)
+
+      get "#{name}/new", o.build(:new) if f.yes?(:new) && !api_mode?
+      get name, o.build(:show) if f.yes?(:show)
+      post name, o.build(:create) if f.yes?(:create)
+      get "#{name}/edit", o.build(:edit) if f.yes?(:edit) && !api_mode?
+      put name, o.build(:update) if f.yes?(:update)
+      post name, o.build(:update) if f.yes?(:update) # for binary uploads
+      patch name, o.build(:update) if f.yes?(:update)
+      delete name, o.build(:delete) if f.yes?(:delete)
+    end
+
+    # If a block has pass then we assume the resources will be nested and then prefix
+    # the param name with the resource. IE: post_id instead of id
+    # This avoids an API Gateway parent sibling variable collision.
+    def default_param(has_block, name, options)
+      default_param = has_block ? "#{name.to_s.singularize}_id".to_sym : :id
+      options[:param] || default_param
     end
 
     # root "posts#index"
