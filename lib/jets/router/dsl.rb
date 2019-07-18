@@ -77,7 +77,7 @@ class Jets::Router
     def root(to, options={})
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
-      HelperCreator.new(options, @scope).define_root_helper
+      MethodCreator.new(options, @scope).define_root_helper
       @routes << Route.new(options, @scope)
     end
   end

@@ -26,7 +26,7 @@ module Jets
     def create_route(options)
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
-      HelperCreator.new(options, @scope).define_url_helper!
+      MethodCreator.new(options, @scope).define_url_helper!
       @routes << Route.new(options, @scope)
     end
 

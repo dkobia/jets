@@ -1,5 +1,5 @@
 class Jets::Router
-  class HelperCreator
+  class MethodCreator
     include Util
 
     def initialize(options, scope)

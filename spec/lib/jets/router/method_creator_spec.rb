@@ -1,10 +1,10 @@
-class HelperCreaterView
+class MethodCreaterView
   include Jets::RoutesHelper
 end
 
-describe Jets::Router::HelperCreator do
-  let(:creator) { Jets::Router::HelperCreator.new(options, scope) }
-  let(:view)    { HelperCreaterView.new }
+describe Jets::Router::MethodCreator do
+  let(:creator) { Jets::Router::MethodCreator.new(options, scope) }
+  let(:view)    { MethodCreaterView.new }
   let(:scope)   { Jets::Router::Scope.new }
 
   context "top-level" do
@@ -315,4 +315,3 @@ describe Jets::Router::HelperCreator do
     end
   end
 end
-

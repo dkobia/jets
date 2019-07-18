@@ -29,7 +29,7 @@ EOL
         expect(router.routes.first).to be_a(Jets::Router::Route)
 
         expect(app.new_post_path).to eq("/posts/new")
-        expect(app.edit_post_comment_path(:a, :b)).to eq("/posts/a/comments/b/edit")
+        # expect(app.edit_post_comment_path(:a, :b)).to eq("/posts/a/comments/b/edit")
       end
     end
 
