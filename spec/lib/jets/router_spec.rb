@@ -27,14 +27,11 @@ EOL
         expect(output).to eq(table)
         expect(router.routes).to be_a(Array)
         expect(router.routes.first).to be_a(Jets::Router::Route)
-
-        expect(app.new_post_path).to eq("/posts/new")
-        # expect(app.edit_post_comment_path(:a, :b)).to eq("/posts/a/comments/b/edit")
       end
     end
 
     context "nested resources full" do
-      it "as path to" do
+      it "posts comments" do
         router.draw do
           resources :posts do
             resources :comments
@@ -67,11 +64,21 @@ EOL
 +-------------------+--------+----------------------------------+-------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_comment_path(1, 2)).to eq("/posts/1/comments/2/edit")
+
+        expect(app.post_comments_path(1)).to eq("/posts/1/comments")
+        expect(app.new_post_comment_path(1)).to eq("/posts/1/comments/new")
+        expect(app.post_comment_path(1, 2)).to eq("/posts/1/comments/2")
+        expect(app.edit_post_comment_path(1, 2)).to eq("/posts/1/comments/2/edit")
       end
     end
 
     context "namespace resources full" do
-      it "as path to" do
+      it "admin posts" do
         router.draw do
           namespace :admin do
             resources :posts
@@ -95,6 +102,11 @@ EOL
 +-----------------+--------+----------------------+--------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.admin_posts_path).to eq("/admin/posts/1")
+        expect(app.new_admin_post_path).to eq("/admin/posts/new")
+        expect(app.admin_post_path(1)).to eq("/admin/posts/1")
+        expect(app.edit_admin_post_path(1)).to eq("/admin/posts/1/edit")
       end
     end
 

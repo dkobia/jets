@@ -30,6 +30,8 @@ class Jets::Router
     end
 
     def compute_as
+      return unless @options[:method] == :get
+
       _, action = get_controller_action(@options)
 
       if %w[index edit show new].include?(action.to_s)

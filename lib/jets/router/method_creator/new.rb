@@ -4,6 +4,17 @@ class Jets::Router::MethodCreator
       join(action, singularize(full_as), singularize(path_trunk))
     end
 
+    def meth_args
+      items = @scope.full_as_meth_args
+      return unless items
+
+      items.map! {|x| param_name(x) }
+      items.pop # remove the last element
+      return if items.empty?
+
+      "("+items.join(', ')+")"
+    end
+
     def meth_result
       items = @scope.full_as_meth_args
       return unless items
