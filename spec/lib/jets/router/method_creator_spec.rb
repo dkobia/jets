@@ -1,5 +1,5 @@
 class MethodCreaterView
-  include Jets::RoutesHelper
+  include Jets::Router::Helpers::NamedRoutesHelper
 end
 
 describe Jets::Router::MethodCreator do

@@ -1,14 +1,15 @@
 class RouterTestApp
-  include Jets::RoutesHelper
+  include Jets::Router::Helpers::NamedRoutesHelper
 end
 
 describe Jets::Router do
   let(:router) { Jets::Router.new }
   let(:app)    { RouterTestApp.new }
+  after(:each) { Jets::Router::Helpers::NamedRoutesHelper.clear! }
 
   describe "Router" do
     context "nested resources some" do
-      it "as path to" do
+      it "posts comments" do
         router.draw do
           resources :posts, only: :new do
             resources :comments, only: [:edit]
@@ -31,7 +32,7 @@ EOL
     end
 
     context "nested resources full" do
-      it "testnow posts comments" do
+      it "posts comments" do
         router.draw do
           resources :posts do
             resources :comments

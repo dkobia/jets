@@ -43,7 +43,7 @@ class Jets::Router
     end
 
     def def_meth(str)
-      Jets::RoutesHelper.class_eval(str)
+      Jets::Router::Helpers::NamedRoutesHelper.class_eval(str)
     end
   end
 end

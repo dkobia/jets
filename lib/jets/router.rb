@@ -97,6 +97,7 @@ module Jets
 
     def self.clear!
       @@drawn_router = nil
+      Jets::Router::Helpers::NamedRoutesHelper.clear!
     end
 
     def self.routes
