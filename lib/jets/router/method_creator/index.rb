@@ -5,7 +5,7 @@ class Jets::Router::MethodCreator
     end
 
     def meth_args
-      items = walk_scope_tree do |current, i, result|
+      items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
         next unless prefix
 
@@ -22,7 +22,7 @@ class Jets::Router::MethodCreator
     end
 
     def meth_result
-      items = walk_scope_tree do |current, i, result|
+      items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
         next unless prefix
 
@@ -40,16 +40,6 @@ class Jets::Router::MethodCreator
       end
 
       items.empty? ? nil : '/' + items.join('/')
-    end
-
-    def walk_scope_tree
-      current, i, result = @scope, 0, []
-      while current
-        yield(current, i, result)
-        current = current.parent
-        i += 1
-      end
-      result
     end
   end
 end

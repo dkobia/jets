@@ -4,14 +4,14 @@ class Jets::Router::MethodCreator
       join(action, singularize(full_as), singularize(path_trunk))
     end
 
-    def meth_result
-      items = @scope.full_as_meth_args
-      return unless items
+    def meth_args
+      show = Show.new(@options, @scope, @action)
+      show.meth_args
+    end
 
-      result = items.map do |x|
-        "#{x}/\#{#{param_name(x)}.to_param}"
-      end.join('/')
-      "/#{result}/edit"
+    def meth_result
+      show = Show.new(@options, @scope, @action)
+      show.meth_result + '/edit'
     end
   end
 end

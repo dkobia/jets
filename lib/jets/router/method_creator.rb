@@ -37,9 +37,8 @@ class Jets::Router
       class_name = "Jets::Router::MethodCreator::#{action.camelize}"
       klass = class_name.constantize # Index, Show, Edit, New
       code = klass.new(@options, @scope)
-      puts "define_#{action}_method:".color(:yellow)
-      pp @options
-      puts code.path_method.color(:blue)
+      # puts "define_#{action}_method:".color(:yellow)
+      # puts code.path_method.color(:blue)
       def_meth code.path_method
     end
 

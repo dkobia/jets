@@ -129,7 +129,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 +-----------------+--------+----------------------+--------------------+
 |       As        |  Verb  |         Path         | Controller#action  |
@@ -145,12 +144,12 @@ EOL
 |                 | DELETE | admin/posts/:id      | admin/posts#delete |
 +-----------------+--------+----------------------+--------------------+
 EOL
-        # expect(output).to eq(table)
+        expect(output).to eq(table)
 
         expect(app.admin_posts_path).to eq("/admin/posts")
-        # expect(app.new_admin_post_path).to eq("/admin/posts/new")
-        # expect(app.admin_post_path(1)).to eq("/admin/posts/1")
-        # expect(app.edit_admin_post_path(1)).to eq("/admin/posts/1/edit")
+        expect(app.new_admin_post_path).to eq("/admin/posts/new")
+        expect(app.admin_post_path(1)).to eq("/admin/posts/1")
+        expect(app.edit_admin_post_path(1)).to eq("/admin/posts/1/edit")
       end
     end
 

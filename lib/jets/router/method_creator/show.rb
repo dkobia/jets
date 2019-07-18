@@ -4,14 +4,37 @@ class Jets::Router::MethodCreator
       join(singularize(full_as), singularize(path_trunk))
     end
 
-    def meth_result
-      items = @scope.full_as_meth_args
-      return unless items
+    def meth_args
+      items = walk_scope_parents do |current, i, result|
+        prefix = current.options[:prefix]
+        next unless prefix
 
-      result = items.map do |x|
-        "#{x}/\#{#{param_name(x)}.to_param}"
-      end.join('/')
-      "/#{result}"
+        case current.from
+        when :resources
+          result.unshift(param_name(prefix))
+        else # namespace or scope
+          # do nothing
+        end
+      end
+
+      items.empty? ? nil : "("+items.join(', ')+")"
+    end
+
+    def meth_result
+      items = walk_scope_parents do |current, i, result|
+        prefix = current.options[:prefix]
+        next unless prefix
+
+        case current.from
+        when :resources
+          param = param_name(prefix)
+          result.unshift("#{prefix}/\#{#{param}.to_param}")
+        else # namespace or scope
+          result.unshift(prefix)
+        end
+      end
+
+      items.empty? ? nil : '/' + items.join('/')
     end
   end
 end
