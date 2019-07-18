@@ -31,7 +31,7 @@ EOL
     end
 
     context "nested resources full" do
-      it "posts comments" do
+      it "testnow posts comments" do
         router.draw do
           resources :posts do
             resources :comments
@@ -120,7 +120,7 @@ EOL
     end
 
     context "namespace resources full" do
-      it "admin posts" do
+      it "testnow admin posts" do
         captured_scope = nil
         router.draw do
           namespace :admin do
