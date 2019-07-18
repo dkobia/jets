@@ -121,7 +121,7 @@ EOL
     end
 
     context "namespace resources full" do
-      it "testnow admin posts" do
+      it "admin posts" do
         captured_scope = nil
         router.draw do
           namespace :admin do
