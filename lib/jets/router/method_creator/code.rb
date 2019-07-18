@@ -32,13 +32,11 @@ class Jets::Router::MethodCreator
     end
 
     def path_method
-      code =<<~EOL
+      <<~EOL
         def #{full_meth_name(:path)}#{meth_args}
           "#{meth_result}"
         end
       EOL
-      # puts code
-      code
     end
 
     def param_name(name)
