@@ -49,18 +49,20 @@ class Jets::Router
       EOL
     end
 
+    ###############################
     def define_show_method
       as = @options[:as] || @as_option.show
-      name = underscore("#{as}_path")
+      meth_name = underscore("#{as}_path")
+      meth_args = @as_option.show_args
+      meth_result = @as_option.show_result
 
-      result = [@prefix, @path_trunk].compact.join('/')
-
-      # TODO: user_post(user_id, id) ???
-      def_meth <<~EOL
-        def #{name}(id)
-          "/#{result}/" + id.to_param
+      code =<<~EOL
+        def #{meth_name}#{meth_args}
+          "#{meth_result}"
         end
       EOL
+      # puts code
+      def_meth code
     end
 
     def define_edit_method

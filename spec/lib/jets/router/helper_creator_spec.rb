@@ -287,5 +287,8 @@ describe Jets::Router::HelperCreator do
       expect(view.url_with_dash_path).to eq "/url-with-dash"
     end
   end
+
+  context "resources" do
+  end
 end
 

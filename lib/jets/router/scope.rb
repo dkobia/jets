@@ -73,6 +73,8 @@ module Jets
         items = []
         current = self
         while current
+          # puts "scope.rb current as #{current.level} #{current}".color(:yellow)
+          # pp current
           items.unshift(current.options[:as]) # <= option_name
           current = current.parent
         end
@@ -81,6 +83,17 @@ module Jets
 
         items = singularize_leading(items)
         items.join('_')
+      end
+
+      def full_as_meth_args
+        items = []
+        current = self
+        while current
+          leaf = current.options[:as]
+          items.unshift(leaf) if leaf
+          current = current.parent
+        end
+        items.empty? ? nil : items
       end
 
       # singularize all except last item

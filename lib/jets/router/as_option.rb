@@ -38,11 +38,23 @@ class Jets::Router
       join(singularize(@full_as), singularize(@path_trunk))
     end
 
+    def show_args
+      items = @scope.full_as_meth_args
+      "("+items.join(', ')+")"
+    end
+
+    def show_result
+      items = @scope.full_as_meth_args
+      items.map do |x|
+        "#{x}/\#{#{x}.to_param}"
+      end.join('/')
+    end
+
     def edit
       join(@action, singularize(@full_as), singularize(@path_trunk))
     end
 
-    # TODO: is this the convention we want? Like it because it is simple
+    # TODO: Unsure if is this the convention we want? What about when method has arguments?
     def stock_get
       join(@action, @full_as, @path_trunk)
     end

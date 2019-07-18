@@ -633,5 +633,21 @@ EOL
       end
     end
 
+    # useful for debugging code
+    context "simple" do
+      it "routes" do
+        router.draw do
+          resources :posts, only: [] do
+            resources :comments, only: :show
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
+EOL
+        # expect(output).to eq(table)
+      end
+    end
   end
 end
