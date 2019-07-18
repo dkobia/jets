@@ -2,15 +2,9 @@ class Jets::Router::MethodCreator
   class Code
     include Jets::Router::Util
 
-    def initialize(action, options, scope)
-      @action, @options, @scope = action, options, scope
+    def initialize(options, scope, action=nil)
+      @options, @scope, @action = options, scope, action
       @path, @as = options[:path], options[:as]
-    end
-
-    def meth_name
-      full_as = @scope&.full_as
-      path_trunk = @path.split('/').first unless @scope.from == :resources
-      join(singularize(full_as), singularize(path_trunk))
     end
 
     def meth_args
@@ -19,13 +13,16 @@ class Jets::Router::MethodCreator
       "("+items.join(', ')+")"
     end
 
-    def meth_result
-      items = @scope.full_as_meth_args
-      return unless items
-      result = items.map do |x|
-        "#{x}/\#{#{x}.to_param}"
-      end.join('/')
-      "/#{result}"
+    def action
+      @action || self.class.name.split('::').last.downcase
+    end
+
+    def full_as
+      @scope&.full_as
+    end
+
+    def path_trunk
+      @path.split('/').first unless @scope.from == :resources
     end
 
     def full_meth_name(suffix)

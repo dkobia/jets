@@ -30,7 +30,13 @@ class Jets::Router
     end
 
     def compute_as
-      AsOption.new(@options, @scope).build
+      controller, action = get_controller_action(@options)
+
+      if %w[edit show new].include?(action)
+        Jets::Router::MethodCreator::Show.new(@options, @scope).meth_name
+      else
+        AsOption.new(@options, @scope).build
+      end
     end
 
     # IE: standard: posts/:id/edit

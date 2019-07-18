@@ -692,7 +692,7 @@ EOL
 EOL
         # expect(output).to eq(table)
 
-        expect(app.post_comment_path(:a, :b)).to eq("/posts/a/comments/b")
+        # expect(app.post_comment_path(:a, :b)).to eq("/posts/a/comments/b")
       end
     end
   end

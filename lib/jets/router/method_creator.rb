@@ -53,24 +53,25 @@ class Jets::Router
     end
 
     ###############################
-    def define_show_method
-      code = Code.new(:show, @options, @scope)
+    def define_new_method
+      code = New.new(@options, @scope)
+      puts "define_new_method:".color(:yellow)
       puts code.path_method
       def_meth code.path_method
     end
 
+    def define_show_method
+      code = Show.new(@options, @scope)
+      # puts "define_show_method:".color(:yellow)
+      # puts code.path_method
+      def_meth code.path_method
+    end
+
     def define_edit_method
-      as = @options[:as] || @as_option.edit
-      name = underscore("#{as}_path")
-
-      result = [@prefix, @path_trunk].compact.join('/')
-
-      # TODO: user_post(user_id, id) ???
-      def_meth <<~EOL
-        def #{name}(id)
-          "/#{result}/" + id.to_param + "/#{@action}"
-        end
-      EOL
+      code = Edit.new(@options, @scope)
+      # puts "define_edit_method:".color(:yellow)
+      # puts code.path_method
+      def_meth code.path_method
     end
 
     def define_stock_get_method

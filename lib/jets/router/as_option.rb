@@ -30,33 +30,6 @@ class Jets::Router
       join(@full_as, @path_trunk)
     end
 
-    def new
-      join(@action, singularize(@full_as), singularize(@path_trunk))
-    end
-
-    def show
-      join(singularize(@full_as), singularize(@path_trunk))
-    end
-
-    def show_args
-      items = @scope.full_as_meth_args
-      return unless items
-      "("+items.join(', ')+")"
-    end
-
-    def show_result
-      items = @scope.full_as_meth_args
-      return unless items
-      result = items.map do |x|
-        "#{x}/\#{#{x}.to_param}"
-      end.join('/')
-      "/#{result}"
-    end
-
-    def edit
-      join(@action, singularize(@full_as), singularize(@path_trunk))
-    end
-
     # TODO: Unsure if is this the convention we want? What about when method has arguments?
     def stock_get
       join(@action, @full_as, @path_trunk)

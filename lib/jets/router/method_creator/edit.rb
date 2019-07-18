@@ -1,7 +1,7 @@
 class Jets::Router::MethodCreator
-  class Show < Code
+  class Edit < Code
     def meth_name
-      join(singularize(full_as), singularize(path_trunk))
+      join(action, singularize(full_as), singularize(path_trunk))
     end
 
     def meth_result
@@ -10,7 +10,7 @@ class Jets::Router::MethodCreator
       result = items.map do |x|
         "#{x}/\#{#{x}.to_param}"
       end.join('/')
-      "/#{result}"
+      "/#{result}/edit"
     end
   end
 end
