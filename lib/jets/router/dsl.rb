@@ -52,7 +52,7 @@ class Jets::Router
       }
     end
 
-    def resources_each(name, options={}, has_block)
+    def resources_each(name, options={}, has_block=nil)
       o = Resources::Options.new(name, options)
       f = Resources::Filter.new(name, options)
       param = default_param(has_block, name, options)
@@ -78,7 +78,7 @@ class Jets::Router
       end
     end
 
-    def resource_each(name, options={}, has_block)
+    def resource_each(name, options={}, has_block=nil)
       o = Resources::Options.new(name, options.merge(singular_resource: true))
       f = Resources::Filter.new(name, options)
 
