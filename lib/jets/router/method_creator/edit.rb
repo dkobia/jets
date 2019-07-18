@@ -7,8 +7,9 @@ class Jets::Router::MethodCreator
     def meth_result
       items = @scope.full_as_meth_args
       return unless items
+
       result = items.map do |x|
-        "#{x}/\#{#{x}.to_param}"
+        "#{x}/\#{#{param_name(x)}.to_param}"
       end.join('/')
       "/#{result}/edit"
     end

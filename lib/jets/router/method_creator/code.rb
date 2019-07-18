@@ -10,6 +10,7 @@ class Jets::Router::MethodCreator
     def meth_args
       items = @scope.full_as_meth_args
       return unless items
+      items.map! {|x| param_name(x) }
       "("+items.join(', ')+")"
     end
 
@@ -38,6 +39,10 @@ class Jets::Router::MethodCreator
       EOL
       # puts code
       code
+    end
+
+    def param_name(name)
+      name.to_s.singularize + "_id"
     end
 
   private

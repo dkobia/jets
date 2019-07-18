@@ -26,10 +26,6 @@ class Jets::Router
       end
     end
 
-    def index
-      join(@full_as, @path_trunk)
-    end
-
     # TODO: Unsure if is this the convention we want? What about when method has arguments?
     def stock_get
       join(@action, @full_as, @path_trunk)
