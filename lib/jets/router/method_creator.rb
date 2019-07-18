@@ -32,22 +32,14 @@ class Jets::Router
       class_name = "Jets::Router::MethodCreator::#{action.camelize}"
       klass = class_name.constantize # Index, Show, Edit, New
       code = klass.new(@options, @scope)
-      puts "define_#{action}_method:".color(:yellow)
-      puts code.path_method.color(:blue)
+      # puts "define_#{action}_method:".color(:yellow)
+      # puts code.path_method.color(:blue)
       def_meth code.path_method
     end
 
     def create_root_helper
-      # TODO: Support root under nested resources
-      as = @options[:as] || "root"
-      name = underscore("#{as}_path")
-
-      result = @options[:path]
-      def_meth <<~EOL
-        def #{name}
-          "/#{result}"
-        end
-      EOL
+      code = Jets::Router::MethodCreator::Root.new(@options, @scope)
+      def_meth code.path_method
     end
 
     def def_meth(str)

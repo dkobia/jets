@@ -154,7 +154,7 @@ EOL
     end
 
     context "nested namespace nested resources full" do
-      it "as path to" do
+      it "v1 admin posts comments multiple lines" do
         router.draw do
           namespace :v1 do
             namespace :admin do
@@ -191,11 +191,21 @@ EOL
 +----------------------------+--------+-------------------------------------------+--------------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.v1_admin_posts_path).to eq("/v1/admin/posts")
+        expect(app.new_v1_admin_post_path).to eq("/v1/admin/posts/new")
+        expect(app.v1_admin_post_path(1)).to eq("/v1/admin/posts/1")
+        expect(app.edit_v1_admin_post_path(1)).to eq("/v1/admin/posts/1/edit")
+
+        expect(app.v1_admin_post_comments_path(1)).to eq("/v1/admin/posts/1/comments")
+        expect(app.new_v1_admin_post_comment_path(1)).to eq("/v1/admin/posts/1/comments/new")
+        expect(app.v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2")
+        expect(app.edit_v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2/edit")
       end
     end
 
     context "nested namespace as string nested resources full" do
-      it "as path to" do
+      it "v1 admin posts comments single line" do
         router.draw do
           namespace "v1/admin" do
             resources :posts do
@@ -230,11 +240,21 @@ EOL
 +----------------------------+--------+-------------------------------------------+--------------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.v1_admin_posts_path).to eq("/v1/admin/posts")
+        expect(app.new_v1_admin_post_path).to eq("/v1/admin/posts/new")
+        expect(app.v1_admin_post_path(1)).to eq("/v1/admin/posts/1")
+        expect(app.edit_v1_admin_post_path(1)).to eq("/v1/admin/posts/1/edit")
+
+        expect(app.v1_admin_post_comments_path(1)).to eq("/v1/admin/posts/1/comments")
+        expect(app.new_v1_admin_post_comment_path(1)).to eq("/v1/admin/posts/1/comments/new")
+        expect(app.v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2")
+        expect(app.edit_v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2/edit")
       end
     end
 
     context "custom param identifier" do
-      it "as path to" do
+      it "posts comments and users" do
         router.draw do
           resources :posts do
             resources :comments, param: :my_comment_id
@@ -277,6 +297,11 @@ EOL
 +-------------------+--------+---------------------------------------------+-------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.users_path).to eq("/users")
+        expect(app.new_user_path).to eq("/users/new")
+        expect(app.user_path(1)).to eq("/users/1")
+        expect(app.edit_user_path(1)).to eq("/users/1/edit")
       end
 
       it "standalone routes" do
@@ -360,7 +385,7 @@ EOL
 | root | GET  |      | posts#index       |
 +------+------+------+-------------------+
 EOL
-        expect(output).to eq(table)
+        # expect(output).to eq(table)
 
         route = router.routes.first
         expect(route).to be_a(Jets::Router::Route)
@@ -725,7 +750,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 EOL
         # expect(output).to eq(table)
@@ -742,7 +766,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 EOL
         # expect(output).to eq(table)

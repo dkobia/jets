@@ -30,15 +30,16 @@ class Jets::Router
     end
 
     def compute_as
-      return unless @options[:method] == :get
+      return unless @options[:method] == :get || @options[:root]
 
       _, action = get_controller_action(@options)
-
-      if %w[index edit show new].include?(action.to_s)
+      klass = if @options[:root]
+        Jets::Router::MethodCreator::Root
+      elsif %w[index edit show new].include?(action.to_s)
         class_name = "Jets::Router::MethodCreator::#{action.camelize}"
-        klass = class_name.constantize # Index, Show, Edit, New
+        class_name.constantize # Index, Show, Edit, New
       else
-        klass = Jets::Router::MethodCreator::Generic
+        Jets::Router::MethodCreator::Generic
       end
 
       klass.new(@options, @scope).meth_name
