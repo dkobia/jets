@@ -1,6 +1,6 @@
 class Jets::Router
   module Util
-    # used in AsOption
+    # used in MethodCreator logic
     def join(*items)
       list = items.compact.join('_')
       underscore(list)

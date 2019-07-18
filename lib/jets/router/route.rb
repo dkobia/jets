@@ -30,15 +30,16 @@ class Jets::Router
     end
 
     def compute_as
-      controller, action = get_controller_action(@options)
+      _, action = get_controller_action(@options)
 
       if %w[index edit show new].include?(action.to_s)
         class_name = "Jets::Router::MethodCreator::#{action.camelize}"
         klass = class_name.constantize # Index, Show, Edit, New
-        code = klass.new(@options, @scope).meth_name
       else
-        AsOption.new(@options, @scope).build
+        klass = Jets::Router::MethodCreator::Generic
       end
+
+      klass.new(@options, @scope).meth_name
     end
 
     # IE: standard: posts/:id/edit

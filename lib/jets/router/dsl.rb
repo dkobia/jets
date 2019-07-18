@@ -48,7 +48,7 @@ class Jets::Router
         as: options.delete(:as) || item,
         prefix: options.delete(:prefix) || item,
         # module: options.delete(:module) || item, # NOTE: resources does not automatically set module, but namespace does
-        from: :resources, # flag we can disregard @path_trunk in AsOption class.
+        from: :resources, # flag we can disregard @path_trunk in MethodCreator logic.
       }
     end
 
@@ -77,7 +77,7 @@ class Jets::Router
     def root(to, options={})
       default = {path: '', to: to, method: :get, root: true}
       options = default.merge(options)
-      MethodCreator.new(options, @scope).define_root_helper
+      MethodCreator.new(options, @scope).create_root_helper
       @routes << Route.new(options, @scope)
     end
   end
