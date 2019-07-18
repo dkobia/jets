@@ -664,7 +664,7 @@ EOL
         expect(path).to eq("/posts/a/comments/b")
       end
 
-      it "post_comment" do
+      it "post_comment2" do
         router.draw do
           resources :posts
         end
@@ -672,16 +672,27 @@ EOL
         output = Jets::Router.help(router.routes).to_s
         puts output
         table =<<EOL
-+--------------+------+-----------------------------+-------------------+
-|      As      | Verb |            Path             | Controller#action |
-+--------------+------+-----------------------------+-------------------+
-| post_comment | GET  | posts/:post_id/comments/:id | comments#show     |
-+--------------+------+-----------------------------+-------------------+
 EOL
         # expect(output).to eq(table)
 
-        path = app.post_comment_path(:a, :b)
-        expect(path).to eq("/posts/a/comments/b")
+        expect(app.post_path(:a)).to eq("/posts/a")
+      end
+
+      it "post_comment3" do
+        router.draw do
+          resources :posts do
+            resources :comments do
+            end
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
+EOL
+        # expect(output).to eq(table)
+
+        expect(app.post_comment_path(:a, :b)).to eq("/posts/a/comments/b")
       end
     end
   end

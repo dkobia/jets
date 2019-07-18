@@ -3,7 +3,7 @@ class Jets::Router
     include Util
 
     def initialize(options, scope)
-      @options = options
+      @options, @scope = options, scope
 
       # puts "helper_creator.rb @options #{@options}"
       # puts "helper_creator.rb scope:"
@@ -12,8 +12,7 @@ class Jets::Router
       @meth, @path, @to, @as = @options[:method], @options[:path], @options[:to], @options[:as]
       @prefix, @as = @options[:prefix], @options[:as]
 
-      @controller, @action = get_controller_action(options)
-      @upath, @ucontroller, @uprefix = underscore(@path), underscore(@controller), underscore(@prefix)
+      _, @action = get_controller_action(options)
       @path_trunk = @path.split('/').first # posts/new -> posts
 
       @as_option = AsOption.new(options, scope)
@@ -55,18 +54,9 @@ class Jets::Router
 
     ###############################
     def define_show_method
-      as = @options[:as] || @as_option.show
-      meth_name = underscore("#{as}_path")
-      meth_args = @as_option.show_args
-      meth_result = @as_option.show_result
-
-      code =<<~EOL
-        def #{meth_name}#{meth_args}
-          "#{meth_result}"
-        end
-      EOL
-      puts code
-      def_meth code
+      code = Code.new(:show, @options, @scope)
+      puts code.path_method
+      def_meth code.path_method
     end
 
     def define_edit_method
