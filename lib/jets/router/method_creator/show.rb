@@ -23,6 +23,12 @@ class Jets::Router::MethodCreator
     def meth_result
       items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
+
+        if !prefix && i == 0
+          result.unshift(path_trunk)
+          next
+        end
+
         next unless prefix
 
         case current.from
