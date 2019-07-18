@@ -84,14 +84,36 @@ module Jets
         items.join('_')
       end
 
+      # #<Jets::Router::Scope:0x0000562ba3df80c0
+      # @level=3,
+      # @options={:as=>:posts, :prefix=>:posts, :from=>:resources},
+      # @parent=
+      #   #<Jets::Router::Scope:0x0000562ba3df8228
+      #   @level=2,
+      #   @options={:module=>:admin, :prefix=>:admin, :as=>:admin, :from=>:namespace},
+      #   @parent=
+      #     #<Jets::Router::Scope:0x0000562ba3df8340
+      #     @level=1,
+      #     @options={},
+      #     @parent=nil>>>
       def full_as_meth_args
         items = []
         current = self
         while current
           leaf = current.options[:as]
-          items.unshift(leaf) if leaf
+
+          if leaf
+            case current.from
+            when :namespace
+              # do nothing
+            else # namespace or scope
+              items.unshift(leaf)
+            end
+          end
+
           current = current.parent
         end
+
         items.empty? ? nil : items
       end
 

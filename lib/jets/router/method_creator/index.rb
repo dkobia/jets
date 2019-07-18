@@ -5,31 +5,49 @@ class Jets::Router::MethodCreator
     end
 
     def meth_args
-      items = @scope.full_as_meth_args
-      return unless items
+      i, items, current = 0, [], @scope
+      while current
+        prefix = current.options[:prefix]
+        if prefix
+          case current.from
+          when :resources
+            # unless i == 0 because index action doesnt have parameter at the end
+            items.unshift(param_name(prefix)) unless i == 0
+          else # namespace or scope
+            # do nothing
+          end
+        end
 
-      items.map! {|x| param_name(x) }
-      items.pop # remove the last element
-      return if items.empty?
+        current = current.parent
+        i += 1
+      end
 
-      "("+items.join(', ')+")"
+      items.empty? ? nil : "("+items.join(', ')+")"
     end
 
     def meth_result
-      items = @scope.full_as_meth_args
-      return unless items
-
-      result = []
-      items.each_with_index do |item, index|
-        item = item.to_s
-        if index == items.size - 1 # last item
-          result << "#{item}"
-        else
-          result << "#{item}/\#{#{param_name(item)}.to_param}"
+      i, items, current = 0, [], @scope
+      while current
+        prefix = current.options[:prefix]
+        if prefix
+          case current.from
+          when :resources
+            if i == 0 # index action doesnt have parameter at the end
+              items.unshift(prefix)
+            else
+              param = param_name(prefix)
+              items.unshift("#{prefix}/\#{#{param}.to_param}")
+            end
+          else # namespace or scope
+            items.unshift(prefix)
+          end
         end
+
+        current = current.parent
+        i += 1
       end
 
-      "/" + result.join("/")
+      items.empty? ? nil : '/' + items.join('/')
     end
   end
 end
