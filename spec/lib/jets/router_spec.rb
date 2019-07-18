@@ -313,6 +313,7 @@ EOL
           any "others/*proxy", to: "others#catchall"
         end
 
+        # TODO: Still unsure about the the generate named routes convention
         output = Jets::Router.help(router.routes).to_s
         table =<<EOL
 +--------------+------+-------------------+--------------------+
@@ -385,7 +386,7 @@ EOL
 | root | GET  |      | posts#index       |
 +------+------+------+-------------------+
 EOL
-        # expect(output).to eq(table)
+        expect(output).to eq(table)
 
         route = router.routes.first
         expect(route).to be_a(Jets::Router::Route)
@@ -430,7 +431,7 @@ EOL
 
     context "scope with module" do
       # more general scope method
-      it "admin module" do
+      it "admin module single method" do
         router.draw do
           scope(module: :admin) do
             get "posts", to: "posts#index"
@@ -448,7 +449,39 @@ EOL
         expect(output).to eq(table)
       end
 
-      it "api/v1 module nested" do
+      it "admin module all methods" do
+        router.draw do
+          scope(module: :admin) do
+            resources "posts"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
++-----------+--------+----------------+--------------------+
+|    As     |  Verb  |      Path      | Controller#action  |
++-----------+--------+----------------+--------------------+
+| posts     | GET    | posts          | admin/posts#index  |
+| new_post  | GET    | posts/new      | admin/posts#new    |
+| post      | GET    | posts/:id      | admin/posts#show   |
+|           | POST   | posts          | admin/posts#create |
+| edit_post | GET    | posts/:id/edit | admin/posts#edit   |
+|           | PUT    | posts/:id      | admin/posts#update |
+|           | POST   | posts/:id      | admin/posts#update |
+|           | PATCH  | posts/:id      | admin/posts#update |
+|           | DELETE | posts/:id      | admin/posts#delete |
++-----------+--------+----------------+--------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
+      end
+
+      it "api/v1 module nested single method" do
         router.draw do
           scope(module: :api) do
             scope(module: :v1) do
@@ -466,6 +499,40 @@ EOL
 +-------+------+-------+--------------------+
 EOL
         expect(output).to eq(table)
+      end
+
+      it "api/v1 module nested all resources methods" do
+        router.draw do
+          scope(module: :api) do
+            scope(module: :v1) do
+              resources :posts
+            end
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
++-----------+--------+----------------+---------------------+
+|    As     |  Verb  |      Path      |  Controller#action  |
++-----------+--------+----------------+---------------------+
+| posts     | GET    | posts          | api/v1/posts#index  |
+| new_post  | GET    | posts/new      | api/v1/posts#new    |
+| post      | GET    | posts/:id      | api/v1/posts#show   |
+|           | POST   | posts          | api/v1/posts#create |
+| edit_post | GET    | posts/:id/edit | api/v1/posts#edit   |
+|           | PUT    | posts/:id      | api/v1/posts#update |
+|           | POST   | posts/:id      | api/v1/posts#update |
+|           | PATCH  | posts/:id      | api/v1/posts#update |
+|           | DELETE | posts/:id      | api/v1/posts#delete |
++-----------+--------+----------------+---------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
       end
 
       it "api/v1 module oneline" do
