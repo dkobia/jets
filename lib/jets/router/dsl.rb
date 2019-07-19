@@ -45,9 +45,17 @@ class Jets::Router
     end
 
     def scope_options!(item, options)
+      prefix = if options[:prefix]
+        # prefix given from the resources macro get automatically prepended to the item name
+        p = options.delete(:prefix)
+        "#{p}/#{item}"
+      else
+        item
+      end
+
       {
-        as: options.delete(:as) || item,
-        prefix: options.delete(:prefix) || item,
+        as: options.delete(:as) || item, # delete as or it messes with create_route
+        prefix: prefix,
         # module: options.delete(:module) || item, # NOTE: resources does not automatically set module, but namespace does
       }
     end

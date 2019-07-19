@@ -861,57 +861,143 @@ EOL
       end
     end
 
-    # useful for debugging code
-    context "simple routes" do
-      it "post_comment" do
+    context "resources direct options" do
+      it "as articles" do
         router.draw do
-          resources :posts, only: [] do
-            resources :comments, only: :show
-          end
+          resources :posts, as: "articles"
         end
 
         output = Jets::Router.help(router.routes).to_s
         table =<<EOL
-+--------------+------+-----------------------------+-------------------+
-|      As      | Verb |            Path             | Controller#action |
-+--------------+------+-----------------------------+-------------------+
-| post_comment | GET  | posts/:post_id/comments/:id | comments#show     |
-+--------------+------+-----------------------------+-------------------+
++--------------+--------+----------------+-------------------+
+|      As      |  Verb  |      Path      | Controller#action |
++--------------+--------+----------------+-------------------+
+| articles     | GET    | posts          | posts#index       |
+| new_article  | GET    | posts/new      | posts#new         |
+| article      | GET    | posts/:id      | posts#show        |
+|              | POST   | posts          | posts#create      |
+| edit_article | GET    | posts/:id/edit | posts#edit        |
+|              | PUT    | posts/:id      | posts#update      |
+|              | POST   | posts/:id      | posts#update      |
+|              | PATCH  | posts/:id      | posts#update      |
+|              | DELETE | posts/:id      | posts#delete      |
++--------------+--------+----------------+-------------------+
 EOL
         expect(output).to eq(table)
 
-        path = app.post_comment_path(:a, :b)
-        expect(path).to eq("/posts/a/comments/b")
+        expect(app.articles_path).to eq("/posts")
+        expect(app.new_article_path).to eq("/posts/new")
+        expect(app.article_path(1)).to eq("/posts/1")
+        expect(app.edit_article_path(1)).to eq("/posts/1/edit")
       end
 
-      it "post_comment2" do
+      it "module admin" do
         router.draw do
-          resources :posts
+          resources :posts, module: "admin"
         end
 
         output = Jets::Router.help(router.routes).to_s
         table =<<EOL
++-----------+--------+----------------+--------------------+
+|    As     |  Verb  |      Path      | Controller#action  |
++-----------+--------+----------------+--------------------+
+| posts     | GET    | posts          | admin/posts#index  |
+| new_post  | GET    | posts/new      | admin/posts#new    |
+| post      | GET    | posts/:id      | admin/posts#show   |
+|           | POST   | posts          | admin/posts#create |
+| edit_post | GET    | posts/:id/edit | admin/posts#edit   |
+|           | PUT    | posts/:id      | admin/posts#update |
+|           | POST   | posts/:id      | admin/posts#update |
+|           | PATCH  | posts/:id      | admin/posts#update |
+|           | DELETE | posts/:id      | admin/posts#delete |
++-----------+--------+----------------+--------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
+      end
+
+      it "prefix admin" do
+        router.draw do
+          resources :posts, prefix: "admin", only: :index
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
++-------+------+-------+-------------------+
+|  As   | Verb | Path  | Controller#action |
++-------+------+-------+-------------------+
+| posts | GET  | posts | posts#index       |
++-------+------+-------+-------------------+
 EOL
         # expect(output).to eq(table)
 
-        expect(app.post_path(:a)).to eq("/posts/a")
+        # here
+        expect(app.posts_path).to eq("/admin/posts")
+        # expect(app.new_post_path).to eq("/admin/posts/new")
+        # expect(app.post_path(1)).to eq("/admin/posts/1")
+        # expect(app.edit_post_path(1)).to eq("/admin/posts/1/edit")
       end
+    end
 
-      it "post_comment3" do
+    ########################
+    # useful for debugging code
+    context "simple routes" do
+      it "debug0" do
         router.draw do
-          resources :posts do
-            resources :comments do
-            end
+          resources :posts, only: [] do
+            resources :comments, only: :index
           end
         end
-
         output = Jets::Router.help(router.routes).to_s
-        table =<<EOL
-EOL
-        # expect(output).to eq(table)
-
-        # expect(app.post_comment_path(:a, :b)).to eq("/posts/a/comments/b")
+        puts output
+        expect(app.post_comments_path(1)).to eq("/posts/1/comments")
       end
+
+      it "debug1" do
+        router.draw do
+          resources :posts, only: :index
+        end
+        expect(app.posts_path).to eq("/posts")
+      end
+
+      it "debug2" do
+        router.draw do
+          resources :posts, prefix: "admin", only: :index
+        end
+        expect(app.posts_path).to eq("/admin/posts")
+      end
+
+      it "debug3" do
+        router.draw do
+          resources :posts, prefix: "admin", only: :index
+        end
+        expect(app.posts_path).to eq("/admin/posts")
+      end
+
+      it "debug4" do
+        router.draw do
+          resources :posts, prefix: "articles", only: :index do
+            resources :comments, only: :new
+          end
+        end
+        puts "app.posts_path #{app.posts_path}"
+        puts "app.new_post_comment_path(1) #{app.new_post_comment_path(1)}"
+
+        # expect(app.posts_path).to eq("/admin/posts")
+        # expect(app.new_post_comment_path(1)).to eq("/admin/posts/1/comments/new")
+      end
+
+      # it "debug-xxx" do
+      #   router.draw do
+      #     get "posts", to: "posts#index", prefix: "admin"
+      #   end
+      #   expect(app.posts_path).to eq("/admin/posts")
+      # end
     end
   end
 end

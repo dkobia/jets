@@ -24,7 +24,7 @@ class Jets::Router
 
     def compute_to
       controller, action = get_controller_action(@options)
-      mod = @scope.full_module
+      mod = @options[:module] || @scope.full_module
       controller = [mod, controller].compact.join('/') # add module
       "#{controller}##{action}"
     end

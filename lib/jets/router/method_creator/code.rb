@@ -22,6 +22,9 @@ class Jets::Router::MethodCreator
       @scope&.full_as
     end
 
+    # TODO: this is use to get the method names properly called only
+    # But looks like we also need it for the result now value
+    # Figure out a way to clean this up and make it more followable.
     def path_trunk
       @path.to_s.split('/').first unless @scope.from == :resources || @scope.from == :resource
     end
@@ -40,7 +43,15 @@ class Jets::Router::MethodCreator
     end
 
     def param_name(name)
-      name.to_s.singularize + "_id"
+      # split('/').last for case:
+      #
+      #   resources :posts, prefix: "articles", only: :index do
+      #     resources :comments, only: :new
+      #   end
+      #
+      # Since the prefix at the scope level is added to the posts item
+      #
+      name.to_s.split('/').last.singularize + "_id"
     end
 
     def walk_scope_parents
