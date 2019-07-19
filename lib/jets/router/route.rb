@@ -10,7 +10,7 @@ class Jets::Router
     CAPTURE_REGEX = "([^/]*)" # as string
 
     attr_reader :to, :as
-    def initialize(options, scope)
+    def initialize(options, scope=Scope.new)
       @options, @scope = options, scope
       @path = compute_path
       @to = compute_to
