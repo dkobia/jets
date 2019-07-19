@@ -199,8 +199,7 @@ module Jets::Controller::Rendering
         # Assign local variable because scope in the `:action_view do` block changes
         app_helper_classes = find_app_helper_classes
         ActiveSupport.on_load :action_view do
-          include Jets::Router::Helpers::CoreHelper # for internal routes helpers
-          include Jets::Router::Helpers::NamedRoutesHelper # for internal routes helpers
+          include Jets::Router::Helpers # internal routes helpers
           include ApplicationHelper  # include first
           app_helper_classes.each do |helper_class|
             include helper_class

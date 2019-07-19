@@ -40,12 +40,23 @@ module Jets::UrlHelper
       raise "ERROR: You passed a nil value in the Array. #{array.inspect}."
     end
 
+    last_persisted = nil
     items = array.map do |x|
-      x.is_a?(ActiveRecord::Base) ? x.model_name.singular_route_key : x
+      if x.is_a?(ActiveRecord::Base)
+        last_persisted = x.persisted?
+        x.persisted? ? x.model_name.singular_route_key : x.model_name.route_key
+      else
+        x
+      end
     end
     meth = items.join('_') + "_path"
-    args = array.first.is_a?(Symbol) ? array[1..-1] : array
 
+    args = array.clone
+    args.shift if args.first.is_a?(Symbol) # drop the first element if its a symbol
+    args = last_persisted ? args : args[0..-2]
+
+    # post_comment_path(post_id) - keep all args - for update
+    # post_comments_path - drop last arg - for create
     send(meth, *args)
   end
 end # UrlHelper

@@ -10,6 +10,7 @@ class Jets::Controller
     include Params
     include Rendering
     include ActiveSupport::Rescuable
+    include Jets::Router::Helpers
 
     delegate :headers, to: :request
     delegate :set_header, to: :response
