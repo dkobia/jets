@@ -4,6 +4,11 @@ class Jets::Router::MethodCreator
       join(singularize(full_as), singularize(path_trunk))
     end
 
+    # Example return values:
+    #
+    #     post_comment_path => (post_id, comment_id)
+    #     post_path => (post_id)
+    #
     def meth_args
       items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
@@ -24,6 +29,7 @@ class Jets::Router::MethodCreator
       items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
 
+        # Case: scope(as: "admin") and no prefix is set, then we'll use the trunk path for end of the path
         if !prefix && i == 0
           result.unshift(path_trunk)
           next

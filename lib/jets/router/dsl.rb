@@ -36,6 +36,7 @@ class Jets::Router
     def resources(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
+        scope_options[:from] = :resources # flag for MethodCreator logic: to handle @path_trunk and more
         scope(scope_options) do
           resources_each(item, options, block_given?)
           yield if block_given?
@@ -48,7 +49,6 @@ class Jets::Router
         as: options.delete(:as) || item,
         prefix: options.delete(:prefix) || item,
         # module: options.delete(:module) || item, # NOTE: resources does not automatically set module, but namespace does
-        from: :resources, # flag we can disregard @path_trunk in MethodCreator logic.
       }
     end
 
@@ -71,6 +71,7 @@ class Jets::Router
     def resource(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
+        scope_options[:from] = :resource # flag for MethodCreator logic: to handle @path_trunk and more
         scope(scope_options) do
           resource_each(item, options, block_given?)
           yield if block_given?

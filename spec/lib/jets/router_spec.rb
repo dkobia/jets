@@ -787,6 +787,80 @@ EOL
       end
     end
 
+    context "singular resource" do
+      it "profile" do
+        router.draw do
+          resource :profile
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        # There is no index route for the singular resource
+        table =<<EOL
++--------------+--------+--------------+-------------------+
+|      As      |  Verb  |     Path     | Controller#action |
++--------------+--------+--------------+-------------------+
+| new_profile  | GET    | profile/new  | profiles#new      |
+| profile      | GET    | profile      | profiles#show     |
+|              | POST   | profile      | profiles#create   |
+| edit_profile | GET    | profile/edit | profiles#edit     |
+|              | PUT    | profile      | profiles#update   |
+|              | POST   | profile      | profiles#update   |
+|              | PATCH  | profile      | profiles#update   |
+|              | DELETE | profile      | profiles#delete   |
++--------------+--------+--------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_profile_path).to eq("/profile/new")
+        expect(app.profile_path).to eq("/profile")
+        expect(app.edit_profile_path).to eq("/profile/edit")
+      end
+
+      it "nested profile" do
+        router.draw do
+          resources :users do
+            resource :profile
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        # There is no index route for the singular resource
+        table =<<EOL
++-------------------+--------+-----------------------------+-------------------+
+|        As         |  Verb  |            Path             | Controller#action |
++-------------------+--------+-----------------------------+-------------------+
+| users             | GET    | users                       | users#index       |
+| new_user          | GET    | users/new                   | users#new         |
+| user              | GET    | users/:user_id              | users#show        |
+|                   | POST   | users                       | users#create      |
+| edit_user         | GET    | users/:user_id/edit         | users#edit        |
+|                   | PUT    | users/:user_id              | users#update      |
+|                   | POST   | users/:user_id              | users#update      |
+|                   | PATCH  | users/:user_id              | users#update      |
+|                   | DELETE | users/:user_id              | users#delete      |
+| new_user_profile  | GET    | users/:user_id/profile/new  | profiles#new      |
+| user_profile      | GET    | users/:user_id/profile      | profiles#show     |
+|                   | POST   | users/:user_id/profile      | profiles#create   |
+| edit_user_profile | GET    | users/:user_id/profile/edit | profiles#edit     |
+|                   | PUT    | users/:user_id/profile      | profiles#update   |
+|                   | POST   | users/:user_id/profile      | profiles#update   |
+|                   | PATCH  | users/:user_id/profile      | profiles#update   |
+|                   | DELETE | users/:user_id/profile      | profiles#delete   |
++-------------------+--------+-----------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.users_path).to eq("/users")
+        expect(app.new_user_path).to eq("/users/new")
+        expect(app.user_path(1)).to eq("/users/1")
+        expect(app.edit_user_path(1)).to eq("/users/1/edit")
+
+        expect(app.new_user_profile_path(1)).to eq("/users/1/profile/new")
+        expect(app.user_profile_path(1)).to eq("/users/1/profile")
+        expect(app.edit_user_profile_path(1)).to eq("/users/1/profile/edit")
+      end
+    end
+
     # useful for debugging code
     context "simple routes" do
       it "post_comment" do

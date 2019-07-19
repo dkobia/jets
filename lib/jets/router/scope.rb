@@ -25,8 +25,8 @@ module Jets
           leaf = current.options[:module]
           if leaf
             case current.from
-            when :resources
-              unless i == 0 # since resources creates an extra layer
+            when :resources, :resource
+              unless i == 0 # since resources and resource create an extra 'scope' layer
                 items.unshift(leaf)
               end
             else # namespace or scope
@@ -50,8 +50,8 @@ module Jets
           leaf = current.options[:prefix]
           if leaf
             case current.from
-            when :resources
-              unless i == 0 # since resources creates an extra layer
+            when :resources, :resource
+              unless i == 0 # since resources and resource create an extra 'scope' layer
                 items.unshift(":#{leaf.to_s.singularize}_id")
                 items.unshift(leaf)
               end

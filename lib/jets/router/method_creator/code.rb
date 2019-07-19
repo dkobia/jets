@@ -23,7 +23,7 @@ class Jets::Router::MethodCreator
     end
 
     def path_trunk
-      @path.to_s.split('/').first unless @scope.from == :resources
+      @path.to_s.split('/').first unless @scope.from == :resources || @scope.from == :resource
     end
 
     def full_meth_name(suffix)

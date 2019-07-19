@@ -25,6 +25,7 @@ class Jets::Router::MethodCreator
       items = walk_scope_parents do |current, i, result|
         prefix = current.options[:prefix]
 
+        # Case: scope(as: "admin") and no prefix is set, then we'll use the trunk path for end of the path
         if !prefix && i == 0
           result.unshift(path_trunk)
           next
