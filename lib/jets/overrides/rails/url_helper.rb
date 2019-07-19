@@ -35,9 +35,9 @@ module Jets::UrlHelper
 
   # Convention is that the model class name is the method name. Doesnt work if user is using as.
   def _handle_array(array)
-    contains_nil = !items.select(&:nil?).empty?
+    contains_nil = !array.select(&:nil?).empty?
     if contains_nil
-      raise "ERROR: You passed a nil value in the Array. #{array.inspect}. "
+      raise "ERROR: You passed a nil value in the Array. #{array.inspect}."
     end
 
     items = array.map do |x|
