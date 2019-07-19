@@ -49,7 +49,11 @@ class Jets::Router::MethodCreator
       #     resources :comments, only: :new
       #   end
       #
-      # Since the prefix at the scope level is added to the posts item
+      # Since the prefix at the scope level is added to the posts item, which results in:
+      #
+      #   param_name("articles/posts")
+      #
+      # We drop the articles prefix portion. The resources items can only be words with no /.
       #
       name.to_s.split('/').last.singularize + "_id"
     end

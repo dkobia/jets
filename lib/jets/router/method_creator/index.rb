@@ -22,15 +22,7 @@ class Jets::Router::MethodCreator
     end
 
     def meth_result
-      puts "options: #{@options}".color(:orange)
-      puts "@path #{@path}"
-      puts "path_trunk #{path_trunk.inspect}"
-      # pp @scope
-
       items = walk_scope_parents do |current, i, result|
-        puts "current.level options #{current.level}:".color(:green)
-        pp current.options
-
         prefix = current.options[:prefix]
 
         # Case: scope(as: "admin") and no prefix is set, then we'll use the trunk path for end of the path
@@ -39,19 +31,11 @@ class Jets::Router::MethodCreator
           next
         end
 
-        # if current.from != :resources # wont have prefix
-        # end
-        # if !prefix
-
         next unless prefix
 
         case current.from
         when :resources
           if i == 0 # index action doesnt have parameter at the end
-            # TODO: figure this out
-            # trunk = @path.to_s.split('/').first
-            # result.unshift(trunk)
-            ##
             result.unshift(prefix)
           else
             param = param_name(prefix)
