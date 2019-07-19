@@ -13,6 +13,8 @@ module Jets::UrlHelper
             _back_url
           when ActiveRecord::Base
             _handle_model(options)
+          when Array
+            _handle_array(options)
           else
             raise ArgumentError, "Please provided a String or ActiveRecord model to link_to as the the second argument. The Jets link_to helper takes as the second argument."
           end
@@ -29,6 +31,22 @@ module Jets::UrlHelper
       meth = model.model_name.route_key + "_path"
       send(meth) # Example: posts_path
     end
+  end
+
+  # Convention is that the model class name is the method name. Doesnt work if user is using as.
+  def _handle_array(array)
+    contains_nil = !items.select(&:nil?).empty?
+    if contains_nil
+      raise "ERROR: You passed a nil value in the Array. #{array.inspect}. "
+    end
+
+    items = array.map do |x|
+      x.is_a?(ActiveRecord::Base) ? x.model_name.singular_route_key : x
+    end
+    meth = items.join('_') + "_path"
+    args = array.first.is_a?(Symbol) ? array[1..-1] : array
+
+    send(meth, *args)
   end
 end # UrlHelper
 
