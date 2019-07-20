@@ -1089,7 +1089,16 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
+        table =<<EOL
++--------+------+------+-------------------+
+|   As   | Verb | Path | Controller#action |
++--------+------+------+-------------------+
+| logout | GET  | exit | sessions#destroy  |
++--------+------+------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.logout_path).to eq("/exit")
       end
 
       it "namespace logout" do
@@ -1100,7 +1109,40 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------+------+------------+------------------------+
+|   As   | Verb |    Path    |   Controller#action    |
++--------+------+------------+------------------------+
+| logout | GET  | users/exit | users/sessions#destroy |
++--------+------+------------+------------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.logout_path).to eq("/users/exit")
+      end
+
+      it "namespace and parameter" do
+        router.draw do
+          # resources :users, only: [] do
+            resources :posts, only: [] do
+              # resources :comments, only: :index
+              get "comments", to: "comments#index"  #, as: :my_users_posts
+            end
+          # end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
         puts output
+        table =<<EOL
++----------------+------+--------------------------+-------------------+
+|       As       | Verb |           Path           | Controller#action |
++----------------+------+--------------------------+-------------------+
+| users__user_id | GET  | users/:user_id/posts/:id | users/posts#index |
++----------------+------+--------------------------+-------------------+
+EOL
+        # expect(output).to eq(table)
+
+        # expect(app.user_post_path(1,2)).to eq("/users/1/posts/2")
       end
     end
 
