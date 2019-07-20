@@ -41,7 +41,7 @@ class Jets::Router::MethodCreator
     end
 
     # The method_name_leaf is used to generate method names.
-    # TODO: Make more understanable.
+    # Can be nil because sometimes the name is fully acquired from the scope.
     def method_name_leaf
       unless %w[resource resources].include?(@scope.from.to_s) && @options[:from_scope]
         @controller

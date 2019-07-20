@@ -3,9 +3,9 @@ class RouterTestApp
 end
 
 describe Jets::Router do
-  let(:router) { Jets::Router.new }
-  let(:app)    { RouterTestApp.new }
-  after(:each) { Jets::Router::Helpers::NamedRoutesHelper.clear! }
+  let(:router)  { Jets::Router.new }
+  let(:app)     { RouterTestApp.new }
+  before(:each) { Jets::Router::Helpers::NamedRoutesHelper.clear! }
 
   describe "Router" do
     context "nested resources some" do
@@ -1292,8 +1292,8 @@ EOL
     context "debugging" do
       it "debug1" do
         router.draw do
-          resource :profile, module: 'admin' do
-            resources :users
+          resources :posts, only: [] do
+            resources :comments, only: :show
           end
         end
         output = Jets::Router.help(router.routes).to_s
