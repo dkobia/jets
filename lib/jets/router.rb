@@ -26,8 +26,29 @@ module Jets
     def create_route(options)
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
+      infer_to_option!(options)
       MethodCreator.new(options, @scope).define_url_helper!
       @routes << Route.new(options, @scope)
+    end
+
+    # Can possibly infer to option from the path. Example:
+    #
+    #     get 'posts/index'
+    #     get 'posts', to: 'posts#index'
+    #
+    #     get 'posts/show'
+    #     get 'posts', to: 'posts#show'
+    #
+    def infer_to_option!(options)
+      return if options[:to]
+
+      path = options[:path]
+      return unless path.include?('/')
+
+      items = path.split('/')
+      if items.size == 2
+        options[:to] = items.join('#')
+      end
     end
 
     def api_mode?

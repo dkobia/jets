@@ -1287,14 +1287,34 @@ EOL
       end
     end
 
+    context "infer to option" do
+      it "debug1" do
+        router.draw do
+          get "credit_cards/open"
+          get "credit_cards/debit"
+          get "credit_cards/credit"
+          get "credit_cards/close"
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++----+------+---------------------+---------------------+
+| As | Verb |        Path         |  Controller#action  |
++----+------+---------------------+---------------------+
+|    | GET  | credit_cards/open   | credit_cards#open   |
+|    | GET  | credit_cards/debit  | credit_cards#debit  |
+|    | GET  | credit_cards/credit | credit_cards#credit |
+|    | GET  | credit_cards/close  | credit_cards#close  |
++----+------+---------------------+---------------------+
+EOL
+        expect(output).to eq(table)
+      end
+    end
+
     ########################
     # useful for debugging
     context "debugging" do
       it "debug1" do
         router.draw do
-          resources :posts, only: [] do
-            resources :comments, only: :show
-          end
         end
         output = Jets::Router.help(router.routes).to_s
         # puts output
