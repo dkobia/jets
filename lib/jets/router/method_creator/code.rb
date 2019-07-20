@@ -8,10 +8,28 @@ class Jets::Router::MethodCreator
     end
 
     def meth_args
-      items = @scope.full_as_meth_args
-      return unless items
-      items.map! {|x| param_name(x) }
-      "("+items.join(', ')+")"
+      prefix = @scope.full_prefix
+      path = [prefix, @options[:path]].compact.join('/')
+      params = path.split('/').select { |x| x.include?(':') }
+      items = params.map { |x| x.sub(':','') }
+
+      items.empty? ? nil : "("+items.join(', ')+")"
+    end
+
+    def meth_result
+      prefix = @scope.full_prefix
+      path = [prefix, @options[:path]].compact.join('/')
+
+      results = path.split('/').map do |x|
+        if x.include?(':')
+          variable = x.sub(':','')
+          "\#{#{variable}.to_param}"
+        else
+          x
+        end
+      end
+
+      '/' + results.join('/') unless results.empty?
     end
 
     def action

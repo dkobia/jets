@@ -897,7 +897,6 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
-        puts output
         table =<<EOL
 +--------------+--------+----------------+-------------------+
 |      As      |  Verb  |      Path      | Controller#action |
@@ -1080,6 +1079,28 @@ EOL
         expect(app.new_post_path).to eq("/posts/new")
         expect(app.post_path(1)).to eq("/posts/1")
         expect(app.edit_post_path(1)).to eq("/posts/1/edit")
+      end
+    end
+
+    context "direct as" do
+      it "logout" do
+        router.draw do
+          get "exit", to: "sessions#destroy", as: :logout
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+      end
+
+      it "namespace logout" do
+        router.draw do
+          namespace :users do
+            get "exit", to: "sessions#destroy", as: :logout
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
       end
     end
 
