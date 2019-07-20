@@ -25,11 +25,11 @@ class Jets::Router::MethodCreator
       #     full_as: users
       #     path_trunk: posts
       #
-      # This is because usingn resources contains the parent scope.
-      # All the info we need is the scope, scope.full_as already has the desired meth_name.
+      # This is because using resources contains all the info we need in parent scopes.
+      # The scope.full_as already has the desired meth_name.
       #
-      # However, when using the simple create_route methods like get, the the parent scope does not contain
-      # all the info we need. In this tricky base, the path_trunk is set.
+      # However, when using the simple create_route methods like get, the parent scope does not contain
+      # all the info we need. In this tricky case, the path_trunk is set.
       # We then have to reconstruct the meth_name.
       #
       if path_trunk
