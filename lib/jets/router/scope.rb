@@ -30,9 +30,6 @@ module Jets
 
       def full_prefix
         items = walk_parents do |current, i, result|
-          # puts "current.level #{current.level}:".color(:green)
-          # pp current.options
-
           prefix = current.options[:prefix]
           next unless prefix
 
@@ -42,7 +39,7 @@ module Jets
             variable = ":#{variable.singularize}_id"
             result.unshift(variable)
             result.unshift(prefix)
-          else # namespace or scope
+          else # resource, namespace or general scope
             result.unshift(prefix)
           end
         end
