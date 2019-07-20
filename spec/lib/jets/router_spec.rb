@@ -1242,6 +1242,49 @@ EOL
         expect(app.profile_post_path(1)).to eq("/profile/posts/1")
         expect(app.edit_profile_post_path(1)).to eq("/profile/posts/1/edit")
       end
+
+      it "posts profile" do
+        router.draw do
+          resources :posts do
+            resource :profile
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------------------+--------+-----------------------------+-------------------+
+|        As         |  Verb  |            Path             | Controller#action |
++-------------------+--------+-----------------------------+-------------------+
+| posts             | GET    | posts                       | posts#index       |
+| new_post          | GET    | posts/new                   | posts#new         |
+| post              | GET    | posts/:post_id              | posts#show        |
+|                   | POST   | posts                       | posts#create      |
+| edit_post         | GET    | posts/:post_id/edit         | posts#edit        |
+|                   | PUT    | posts/:post_id              | posts#update      |
+|                   | POST   | posts/:post_id              | posts#update      |
+|                   | PATCH  | posts/:post_id              | posts#update      |
+|                   | DELETE | posts/:post_id              | posts#delete      |
+| new_post_profile  | GET    | posts/:post_id/profile/new  | profiles#new      |
+| post_profile      | GET    | posts/:post_id/profile      | profiles#show     |
+|                   | POST   | posts/:post_id/profile      | profiles#create   |
+| edit_post_profile | GET    | posts/:post_id/profile/edit | profiles#edit     |
+|                   | PUT    | posts/:post_id/profile      | profiles#update   |
+|                   | POST   | posts/:post_id/profile      | profiles#update   |
+|                   | PATCH  | posts/:post_id/profile      | profiles#update   |
+|                   | DELETE | posts/:post_id/profile      | profiles#delete   |
++-------------------+--------+-----------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
+
+        expect(app.new_post_profile_path(1)).to eq("/posts/1/profile/new")
+        expect(app.post_profile_path(1)).to eq("/posts/1/profile")
+        expect(app.edit_post_profile_path(1)).to eq("/posts/1/profile/edit")
+      end
     end
 
     ########################
@@ -1249,12 +1292,12 @@ EOL
     context "debugging" do
       it "debug1" do
         router.draw do
-          resource :profile do
-            resources :posts
+          resources :posts do
+            resource :profile
           end
         end
         output = Jets::Router.help(router.routes).to_s
-        puts output
+        # puts output
         # expect(app.post_comments_path(1)).to eq("/posts/1/comments")
       end
     end

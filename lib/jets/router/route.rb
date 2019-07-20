@@ -27,9 +27,15 @@ class Jets::Router
       #
       prefix = @scope.full_prefix
       if @options[:from_scope]
-        prefix = prefix.split('/')[0..-3].join('/')
+        if @options[:singular_resource]
+          prefix = prefix.split('/')[0..-2].join('/')
+        else
+          prefix = prefix.split('/')[0..-3].join('/')
+        end
         prefix = nil if prefix == ''
       end
+      # puts "compute_path @scope.full_prefix #{@scope.full_prefix}"
+      # puts "compute_path prefix #{prefix}"
 
       [prefix, @options[:path]].compact.join('/')
     end
