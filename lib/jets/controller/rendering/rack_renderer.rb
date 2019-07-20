@@ -26,11 +26,10 @@ module Jets::Controller::Rendering
       # x-jets-base64 to convert this Rack triplet to a API Gateway hash structure later
       headers["x-jets-base64"] = base64 ? 'yes' : 'no' # headers values must be Strings
 
-      # Rails rendering does heavy lifting
       if drop_content_info?(status)
         body = StringIO.new
       else
-
+        # Rails rendering does heavy lifting
         renderer = ActionController::Base.renderer.new(renderer_options)
         body = renderer.render(render_options)
         body = StringIO.new(body)

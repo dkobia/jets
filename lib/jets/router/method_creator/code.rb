@@ -62,6 +62,17 @@ class Jets::Router::MethodCreator
       EOL
     end
 
+    def url_method
+      path_method_call = "#{full_meth_name(:path)}#{meth_args}"
+      # Note: It is important lazily get the value of ENV['JETS_HOST'] within the method.
+      # Since it is not set until the requrest goes through the main middleware.
+      <<~EOL
+        def #{full_meth_name(:url)}#{meth_args}
+          "\#{ENV['JETS_HOST']}\#{#{path_method_call}}"
+        end
+      EOL
+    end
+
     def param_name(name)
       # split('/').last for case:
       #
