@@ -78,7 +78,7 @@ class Jets::CLI
 
     # jets generate is a special command requires doesn't puts out the help menu automatically when
     # `jets generate` is called without additional args.  We'll take it over early and fix it here.
-    if args == ["generate"] || args[0] == "generate" && help_flags.include?(args[1])
+    if args == ["generate"] || args[0] == "generate" && help_flags.include?(args.last)
       puts Jets::Generator.help
       exit
     end

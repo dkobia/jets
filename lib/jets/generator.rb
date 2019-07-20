@@ -9,7 +9,7 @@ class Jets::Generator
       new(generator, *args).run(:revoke)
     end
 
-    def help(args=ARGV.clone)
+    def help(args=ARGV)
       require_generators
 
       # `jets generate -h` results in:
@@ -24,7 +24,7 @@ class Jets::Generator
       out = capture_stdout do
         if subcommand
           # Using invoke because it ensure the generator is configured properly
-          invoke(["generate", subcommand], []) # sub-level: jets generate scaffold -h
+          invoke(subcommand) # sub-level: jets generate scaffold -h
         else
           puts Jets::Commands::Help.text(:generate) # to trigger the regular Thor help
           # Note: How to call the original top-level help menu from Rails. Keeping around in case its useful later:
