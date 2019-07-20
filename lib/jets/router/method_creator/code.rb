@@ -76,16 +76,6 @@ class Jets::Router::MethodCreator
       name.to_s.split('/').last.singularize + "_id"
     end
 
-    def walk_scope_parents
-      current, i, result = @scope, 0, []
-      while current
-        yield(current, i, result)
-        current = current.parent
-        i += 1
-      end
-      result
-    end
-
   private
     def singularize(s)
       return unless s # nil

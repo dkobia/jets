@@ -94,6 +94,16 @@ module Jets
         items.join('_')
       end
 
+      def walk_scope_parents
+        current, i, result = @scope, 0, []
+        while current
+          yield(current, i, result)
+          current = current.parent
+          i += 1
+        end
+        result
+      end
+
       # singularize all except last item
       def singularize_leading(items)
         result = []

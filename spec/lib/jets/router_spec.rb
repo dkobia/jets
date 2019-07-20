@@ -1144,21 +1144,13 @@ EOL
 
       it "debug3" do
         router.draw do
-          # resources :users, only: [] do
-            resources :posts, only: [] do
-              # resources :comments, only: :index
-              get "comments", to: "comments#index"  #, as: :my_users_posts
-            end
-          # end
+          resources :posts, only: [] do
+            get "comments", to: "comments#index" #, as: :my_users_posts
+          end
         end
 
         output = Jets::Router.help(router.routes).to_s
         table =<<EOL
-+----------------+------+--------------------------+-------------------+
-|       As       | Verb |           Path           | Controller#action |
-+----------------+------+--------------------------+-------------------+
-| users__user_id | GET  | users/:user_id/posts/:id | users/posts#index |
-+----------------+------+--------------------------+-------------------+
 EOL
         # expect(output).to eq(table)
 
