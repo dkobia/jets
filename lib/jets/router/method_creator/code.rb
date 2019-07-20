@@ -8,19 +8,14 @@ class Jets::Router::MethodCreator
     end
 
     def meth_args
-      prefix = @scope.full_prefix
-      path = [prefix, @options[:path]].compact.join('/')
-      params = path.split('/').select { |x| x.include?(':') }
+      params = full_path.split('/').select { |x| x.include?(':') }
       items = params.map { |x| x.sub(':','') }
 
       items.empty? ? nil : "("+items.join(', ')+")"
     end
 
     def meth_result
-      prefix = @scope.full_prefix
-      path = [prefix, @options[:path]].compact.join('/')
-
-      results = path.split('/').map do |x|
+      results = full_path.split('/').map do |x|
         if x.include?(':')
           variable = x.sub(':','')
           "\#{#{variable}.to_param}"
@@ -30,6 +25,11 @@ class Jets::Router::MethodCreator
       end
 
       '/' + results.join('/') unless results.empty?
+    end
+
+    def full_path
+      prefix = @scope.full_prefix
+      path = [prefix, @options[:path]].compact.join('/')
     end
 
     def action
