@@ -78,7 +78,7 @@ class Jets::CLI
 
     # jets generate is a special command requires doesn't puts out the help menu automatically when
     # `jets generate` is called without additional args.  We'll take it over early and fix it here.
-    if args == ["generate"]
+    if args == ["generate"] || args[0] == "generate" && help_flags.include?(args[1])
       puts Jets::Generator.help
       exit
     end
@@ -140,12 +140,8 @@ class Jets::CLI
   end
 
   # ["-h", "-?", "--help", "-D", "help"]
-  def self.help_flags
-    Thor::HELP_MAPPINGS + ["help"]
-  end
-
   def help_flags
-    self.class.help_flags
+    Thor::HELP_MAPPINGS + ["help"]
   end
 
   def namespace

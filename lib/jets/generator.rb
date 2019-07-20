@@ -16,17 +16,18 @@ class Jets::Generator
       #
       #     args = ["generate", "-h"]
       #
-      args.pop if Jets::CLI.help_flags.include?(args.last) # remove the -h flag
-      args = args[1..-1] || [] # remove the first item: generate
+      args = args[1..-1] || []
+      help_flags = Thor::HELP_MAPPINGS + ["help"]
+      args.pop if help_flags.include?(args.last)
       subcommand = args[0]
 
       out = capture_stdout do
         if subcommand
-          Rails::Generators.invoke(subcommand, []) # sub-level: jets generate scaffold -h
+          # Using invoke because it ensure the generator is configured properly
+          invoke(["generate", subcommand], []) # sub-level: jets generate scaffold -h
         else
           puts Jets::Commands::Help.text(:generate) # to trigger the regular Thor help
-          # Note: This is how you call the original top-level help menu from Rails. Keeping around in case its useful
-          # for the future.
+          # Note: How to call the original top-level help menu from Rails. Keeping around in case its useful later:
           # Rails::Generators.help # top-level: jets generate -h
         end
       end
