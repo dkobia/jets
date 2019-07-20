@@ -816,7 +816,7 @@ EOL
         expect(app.edit_profile_path).to eq("/profile/edit")
       end
 
-      it "nested profile" do
+      it "nested resources profile" do
         router.draw do
           resources :users do
             resource :profile
@@ -858,6 +858,35 @@ EOL
         expect(app.new_user_profile_path(1)).to eq("/users/1/profile/new")
         expect(app.user_profile_path(1)).to eq("/users/1/profile")
         expect(app.edit_user_profile_path(1)).to eq("/users/1/profile/edit")
+      end
+
+      it "nested namespace profile" do
+        router.draw do
+          namespace :admin do
+            resource :profile
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------------+--------+--------------------+-----------------------+
+|         As         |  Verb  |        Path        |   Controller#action   |
++--------------------+--------+--------------------+-----------------------+
+| new_admin_profile  | GET    | admin/profile/new  | admin/profiles#new    |
+| admin_profile      | GET    | admin/profile      | admin/profiles#show   |
+|                    | POST   | admin/profile      | admin/profiles#create |
+| edit_admin_profile | GET    | admin/profile/edit | admin/profiles#edit   |
+|                    | PUT    | admin/profile      | admin/profiles#update |
+|                    | POST   | admin/profile      | admin/profiles#update |
+|                    | PATCH  | admin/profile      | admin/profiles#update |
+|                    | DELETE | admin/profile      | admin/profiles#delete |
++--------------------+--------+--------------------+-----------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_admin_profile_path).to eq("/admin/profile/new")
+        expect(app.admin_profile_path).to eq("/admin/profile")
+        expect(app.edit_admin_profile_path).to eq("/admin/profile/edit")
       end
     end
 
@@ -992,6 +1021,64 @@ EOL
         expect(app.new_post_comment_path(1)).to eq("/admin/posts/1/comments/new")
         expect(app.post_comment_path(1, 2)).to eq("/admin/posts/1/comments/2")
         expect(app.edit_post_comment_path(1, 2)).to eq("/admin/posts/1/comments/2/edit")
+      end
+
+      it "resources controller" do
+        router.draw do
+          resources :posts, controller: "articles"
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------+--------+----------------+-------------------+
+|    As     |  Verb  |      Path      | Controller#action |
++-----------+--------+----------------+-------------------+
+| posts     | GET    | posts          | articles#index    |
+| new_post  | GET    | posts/new      | articles#new      |
+| post      | GET    | posts/:id      | articles#show     |
+|           | POST   | posts          | articles#create   |
+| edit_post | GET    | posts/:id/edit | articles#edit     |
+|           | PUT    | posts/:id      | articles#update   |
+|           | POST   | posts/:id      | articles#update   |
+|           | PATCH  | posts/:id      | articles#update   |
+|           | DELETE | posts/:id      | articles#delete   |
++-----------+--------+----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
+      end
+
+      it "resources controller with namespace" do
+        router.draw do
+          resources :posts, controller: "admin/posts"
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------+--------+----------------+--------------------+
+|    As     |  Verb  |      Path      | Controller#action  |
++-----------+--------+----------------+--------------------+
+| posts     | GET    | posts          | admin/posts#index  |
+| new_post  | GET    | posts/new      | admin/posts#new    |
+| post      | GET    | posts/:id      | admin/posts#show   |
+|           | POST   | posts          | admin/posts#create |
+| edit_post | GET    | posts/:id/edit | admin/posts#edit   |
+|           | PUT    | posts/:id      | admin/posts#update |
+|           | POST   | posts/:id      | admin/posts#update |
+|           | PATCH  | posts/:id      | admin/posts#update |
+|           | DELETE | posts/:id      | admin/posts#delete |
++-----------+--------+----------------+--------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
       end
     end
 
