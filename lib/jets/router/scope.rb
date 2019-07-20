@@ -25,7 +25,6 @@ module Jets
           result.unshift(mod)
         end
 
-        items.compact!
         items.empty? ? nil : items.join('/')
       end
 
@@ -48,7 +47,6 @@ module Jets
           end
         end
 
-        items.compact!
         items.empty? ? nil : items.join('/')
       end
 
