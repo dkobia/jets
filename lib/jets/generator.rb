@@ -24,7 +24,10 @@ class Jets::Generator
         if subcommand
           Rails::Generators.invoke(subcommand, []) # sub-level: jets generate scaffold -h
         else
-          Rails::Generators.help # top-level: jets generate -h
+          puts Jets::Commands::Help.text(:generate) # to trigger the regular Thor help
+          # Note: This is how you call the original top-level help menu from Rails. Keeping around in case its useful
+          # for the future.
+          # Rails::Generators.help # top-level: jets generate -h
         end
       end
       out.gsub('rails','jets').gsub('Rails','Jets')
