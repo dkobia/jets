@@ -1199,18 +1199,63 @@ EOL
       end
     end
 
+    context "singular resource nested with plural resources" do
+      it "profile posts" do
+        router.draw do
+          resource :profile do
+            resources :posts
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------------------+--------+------------------------+-------------------+
+|        As         |  Verb  |          Path          | Controller#action |
++-------------------+--------+------------------------+-------------------+
+| new_profile       | GET    | profile/new            | profiles#new      |
+| profile           | GET    | profile                | profiles#show     |
+|                   | POST   | profile                | profiles#create   |
+| edit_profile      | GET    | profile/edit           | profiles#edit     |
+|                   | PUT    | profile                | profiles#update   |
+|                   | POST   | profile                | profiles#update   |
+|                   | PATCH  | profile                | profiles#update   |
+|                   | DELETE | profile                | profiles#delete   |
+| profile_posts     | GET    | profile/posts          | posts#index       |
+| new_profile_post  | GET    | profile/posts/new      | posts#new         |
+| profile_post      | GET    | profile/posts/:id      | posts#show        |
+|                   | POST   | profile/posts          | posts#create      |
+| edit_profile_post | GET    | profile/posts/:id/edit | posts#edit        |
+|                   | PUT    | profile/posts/:id      | posts#update      |
+|                   | POST   | profile/posts/:id      | posts#update      |
+|                   | PATCH  | profile/posts/:id      | posts#update      |
+|                   | DELETE | profile/posts/:id      | posts#delete      |
++-------------------+--------+------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_profile_path).to eq("/profile/new")
+        expect(app.profile_path).to eq("/profile")
+        expect(app.edit_profile_path).to eq("/profile/edit")
+
+        expect(app.profile_posts_path).to eq("/profile/posts")
+        expect(app.new_profile_post_path).to eq("/profile/posts/new")
+        expect(app.profile_post_path(1)).to eq("/profile/posts/1")
+        expect(app.edit_profile_post_path(1)).to eq("/profile/posts/1/edit")
+      end
+    end
+
     ########################
     # useful for debugging
     context "debugging" do
       it "debug1" do
         router.draw do
-          resources :posts, only: [] do
-            resources :comments, only: :index
+          resource :profile do
+            resources :posts
           end
         end
         output = Jets::Router.help(router.routes).to_s
-        # puts output
-        expect(app.post_comments_path(1)).to eq("/posts/1/comments")
+        puts output
+        # expect(app.post_comments_path(1)).to eq("/posts/1/comments")
       end
     end
   end

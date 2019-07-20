@@ -43,7 +43,7 @@ module Jets
           next unless prefix
 
           case current.from
-          when :resources, :resource
+          when :resources
             variable = prefix.to_s.split('/').last
             variable = ":#{variable.singularize}_id"
             result.unshift(variable)
