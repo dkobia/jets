@@ -18,6 +18,13 @@ class Jets::Router
     end
 
     def compute_path
+      # Note: The @options[:prefix] is missing prefix and is not support via direct create_route.
+      # This is because it can be added directly to the path. IE:
+      #
+      #     get "myprefix/posts", to: "posts#index"
+      #
+      # Also, this helps to keep the method creator logic more simple.
+      #
       prefix = @scope.full_prefix
       [prefix, @options[:path]].compact.join('/')
     end
