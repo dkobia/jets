@@ -133,8 +133,12 @@ class Jets::CLI
   end
 
   # ["-h", "-?", "--help", "-D", "help"]
-  def help_flags
+  def self.help_flags
     Thor::HELP_MAPPINGS + ["help"]
+  end
+
+  def help_flags
+    self.class.help_flags
   end
 
   def namespace
