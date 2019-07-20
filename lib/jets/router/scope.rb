@@ -22,15 +22,15 @@ module Jets
         items, i = [], 0
         current = self
         while current
-          leaf = current.options[:module]
-          if leaf
+          mod = current.options[:module]
+          if mod
             case current.from
             when :resources, :resource
               unless i == 0 # since resources and resource create an extra 'scope' layer
-                items.unshift(leaf)
+                items.unshift(mod)
               end
             else # namespace or scope
-              items.unshift(leaf)
+              items.unshift(mod)
             end
           end
 
@@ -47,16 +47,26 @@ module Jets
         items, i = [], 0
         current = self
         while current
-          leaf = current.options[:prefix]
-          if leaf
+          prefix = current.options[:prefix]
+          if prefix
             case current.from
             when :resources, :resource
-              unless i == 0 # since resources and resource create an extra 'scope' layer
-                items.unshift(":#{leaf.to_s.singularize}_id")
-                items.unshift(leaf)
+              # For the last node, we always do not add the path part since the path is already included in the prefix
+              # for the resources macro
+              if i == 0
+                prefix = prefix.to_s.split('/')[0..-2].join('/') # drop the last element
+                items.unshift(prefix) unless prefix == ''
+              else
+                # Drop last items which is the path part because resources can be used with :prefix option.
+                # With resources, the prefix option adds the prefix to the resource item name.
+                # This creates an name like: `admin/posts`. We only want the posts part.
+                variable = prefix.to_s.split('/')[0..-1].last
+                variable = ":#{variable.singularize}_id"
+                items.unshift(variable)
+                items.unshift(prefix)
               end
             else # namespace or scope
-              items.unshift(leaf)
+              items.unshift(prefix)
             end
           end
 

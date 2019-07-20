@@ -22,9 +22,9 @@ class Jets::Router::MethodCreator
       @scope&.full_as
     end
 
-    # TODO: this is use to get the method names properly called only
-    # But looks like we also need it for the result now value
-    # Figure out a way to clean this up and make it more followable.
+    # The path_method is mainly use to generate method names.
+    # But it's also sometimes use for the result, like in index.rb.
+    # TODO: Clean this up and make more understanable.
     def path_trunk
       @path.to_s.split('/').first unless @scope.from == :resources || @scope.from == :resource
     end
