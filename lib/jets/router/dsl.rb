@@ -36,7 +36,7 @@ class Jets::Router
     def resources(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
-        scope_options[:from] = :resources # flag for MethodCreator logic: to handle @path_trunk and more
+        scope_options[:from] = :resources # flag for MethodCreator logic: to handle method_name_leaf and more
         scope(scope_options) do
           resources_each(item, options, block_given?)
           yield if block_given?
@@ -79,7 +79,7 @@ class Jets::Router
     def resource(*items, **options)
       items.each do |item|
         scope_options = scope_options!(item, options)
-        scope_options[:from] = :resource # flag for MethodCreator logic: to handle @path_trunk and more
+        scope_options[:from] = :resource # flag for MethodCreator logic: to handle method_name_leaf and more
         scope(scope_options) do
           resource_each(item, options, block_given?)
           yield if block_given?

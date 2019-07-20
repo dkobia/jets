@@ -2,8 +2,8 @@ class Jets::Router::MethodCreator
   class Code
     include Jets::Router::Util
 
-    def initialize(options, scope, action=nil)
-      @options, @scope, @action = options, scope, action
+    def initialize(options, scope, controller, action=nil)
+      @options, @scope, @controller, @action = options, scope, controller, action
       @path, @as = options[:path], options[:as]
     end
 
@@ -40,11 +40,11 @@ class Jets::Router::MethodCreator
       @scope&.full_as
     end
 
-    # The path_method is used to generate method names.
+    # The method_name_leaf is used to generate method names.
     # TODO: Make more understanable.
-    def path_trunk
+    def method_name_leaf
       unless %w[resource resources].include?(@scope.from.to_s) && @options[:from_scope]
-        @path.to_s.split('/').first
+        @controller
       end
     end
 

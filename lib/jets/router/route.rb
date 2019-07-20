@@ -44,7 +44,7 @@ class Jets::Router
     def compute_as
       return unless @options[:method] == :get || @options[:root]
 
-      _, action = get_controller_action(@options)
+      controller, action = get_controller_action(@options)
       klass = if @options[:root]
         Jets::Router::MethodCreator::Root
       elsif %w[index edit show new].include?(action.to_s)
@@ -54,7 +54,7 @@ class Jets::Router
         Jets::Router::MethodCreator::Generic
       end
 
-      klass.new(@options, @scope).full_meth_name(nil)
+      klass.new(@options, @scope, controller).full_meth_name(nil)
     end
 
     # IE: standard: posts/:id/edit

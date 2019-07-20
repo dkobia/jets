@@ -12,7 +12,7 @@ class Jets::Router::MethodCreator
       # Results in:
       #
       #     full_as: user_posts
-      #     path_trunk: nil
+      #     method_name_leaf: nil
       #
       # Example 2:
       #
@@ -23,17 +23,17 @@ class Jets::Router::MethodCreator
       # Results in:
       #
       #     full_as: users
-      #     path_trunk: posts
+      #     method_name_leaf: posts
       #
       # This is because using resources contains all the info we need in parent scopes.
       # The scope.full_as already has the desired meth_name.
       #
       # However, when using the simple create_route methods like get, the parent scope does not contain
-      # all the info we need. In this tricky case, the path_trunk is set.
+      # all the info we need. In this tricky case, the method_name_leaf is set.
       # We then have to reconstruct the meth_name.
       #
-      if path_trunk
-        join(singularize(full_as), path_trunk) # construct from path_trunk info also
+      if method_name_leaf
+        join(singularize(full_as), method_name_leaf) # reconstruct
       else
         join(full_as) # construct entirely from scope info
       end

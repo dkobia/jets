@@ -4,14 +4,14 @@ class Jets::Router
 
     def initialize(options, scope)
       @options, @scope = options, scope
+      @controller, @action = get_controller_action(@options)
     end
 
     def define_url_helper!
       return unless @options[:method] == :get
 
-      _, action = get_controller_action(@options)
-      if %w[index new show edit].include?(action)
-        create_method(action)
+      if %w[index new show edit].include?(@action)
+        create_method(@action)
       else
         create_method("generic")
       end
@@ -31,14 +31,14 @@ class Jets::Router
       #
       class_name = "Jets::Router::MethodCreator::#{action.camelize}"
       klass = class_name.constantize # Index, Show, Edit, New
-      code = klass.new(@options, @scope)
+      code = klass.new(@options, @scope, @controller)
       # puts "define_#{action}_method:".color(:yellow) if code.path_method
       # puts code.path_method.color(:blue) if code.path_method
       def_meth(code.path_method) if code.path_method
     end
 
     def create_root_helper
-      code = Jets::Router::MethodCreator::Root.new(@options, @scope)
+      code = Jets::Router::MethodCreator::Root.new(@options, @scope, @controller)
       def_meth(code.path_method)
     end
 

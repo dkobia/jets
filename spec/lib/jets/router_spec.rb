@@ -92,7 +92,7 @@ EOL
         end
 
         options = {:to=>"posts#index", :path=>"posts", :method=>:get, from_scope: true}
-        creator = Jets::Router::MethodCreator::Index.new(options, captured_scope)
+        creator = Jets::Router::MethodCreator::Index.new(options, captured_scope, "posts")
         expect(creator.path_method).to eq(<<~EOL)
           def admin_posts_path
             "/admin/posts"
@@ -111,7 +111,7 @@ EOL
         end
 
         options = {:to=>"posts#index", :path=>"posts", :method=>:get, from_scope: true}
-        creator = Jets::Router::MethodCreator::Index.new(options, captured_scope)
+        creator = Jets::Router::MethodCreator::Index.new(options, captured_scope, "posts")
         expect(creator.path_method).to eq(<<~'EOL')
           def user_posts_path(user_id)
             "/users/#{user_id.to_param}/posts"
@@ -308,24 +308,25 @@ EOL
       it "standalone routes" do
         router.draw do
           any "comments/hot", to: "comments#hot"
-          get "landing/posts", to: "posts#index"
+          get "landing/foo/bar", to: "posts#index"
           get "admin/pages", to: "admin/pages#index"
           get "related_posts/:id", to: "related_posts#show"
           any "others/*proxy", to: "others#catchall"
         end
 
-        # TODO: Still unsure about the the generate named routes convention
         output = Jets::Router.help(router.routes).to_s
+        puts output
         table =<<EOL
-+--------------+------+-------------------+--------------------+
-|      As      | Verb |       Path        | Controller#action  |
-+--------------+------+-------------------+--------------------+
-|              | ANY  | comments/hot      | comments#hot       |
-| landing      | GET  | landing/posts     | posts#index        |
-| admin        | GET  | admin/pages       | admin/pages#index  |
-| related_post | GET  | related_posts/:id | related_posts#show |
-|              | ANY  | others/*proxy     | others#catchall    |
-+--------------+------+-------------------+--------------------+
++--------------+------+----------------+-------------------+
+|      As      | Verb |      Path      | Controller#action |
++--------------+------+----------------+-------------------+
+| articles     | GET  | posts          | posts#index       |
+| articles2    | GET  | posts          | posts#list        |
+| new_article  | GET  | posts/new      | posts#new         |
+| article      | GET  | posts/:id      | posts#show        |
+| edit_article | GET  | posts/:id/edit | posts#edit        |
+|              | GET  | posts          | posts#no_as       |
++--------------+------+----------------+-------------------+
 EOL
         expect(output).to eq(table)
       end
@@ -342,6 +343,7 @@ EOL
         end
 
         output = Jets::Router.help(router.routes).to_s
+        puts output
         table =<<EOL
 +--------------+--------+-------------------+--------------------+
 |      As      |  Verb  |       Path        | Controller#action  |
@@ -365,8 +367,8 @@ EOL
 |              | PATCH  | posts/:id         | posts#update       |
 |              | DELETE | posts/:id         | posts#delete       |
 |              | ANY    | comments/hot      | comments#hot       |
-| landing      | GET    | landing/posts     | posts#index        |
-| admin        | GET    | admin/pages       | admin/pages#index  |
+| posts        | GET    | landing/posts     | posts#index        |
+| admin_pages  | GET    | admin/pages       | admin/pages#index  |
 | related_post | GET    | related_posts/:id | related_posts#show |
 |              | ANY    | others/*proxy     | others#catchall    |
 +--------------+--------+-------------------+--------------------+
@@ -1169,11 +1171,11 @@ EOL
 
       it "posts as articles" do
         router.draw do
-          # get "posts", to: "posts#index", as: "articles"
-          # get "posts", to: "posts#list", as: "articles2"
-          # get "posts/new", to: "posts#new", as: "new_article"
-          # get "posts/:id", to: "posts#show", as: "article"
-          # get "posts/:id/edit", to: "posts#edit", as: "edit_article"
+          get "posts", to: "posts#index", as: "articles"
+          get "posts", to: "posts#list", as: "articles2"
+          get "posts/new", to: "posts#new", as: "new_article"
+          get "posts/:id", to: "posts#show", as: "article"
+          get "posts/:id/edit", to: "posts#edit", as: "edit_article"
           get "posts", to: "posts#no_as" # should not create route
         end
 
@@ -1188,15 +1190,16 @@ EOL
 | new_article  | GET  | posts/new      | posts#new         |
 | article      | GET  | posts/:id      | posts#show        |
 | edit_article | GET  | posts/:id/edit | posts#edit        |
+|              | GET  | posts          | posts#no_as       |
 +--------------+------+----------------+-------------------+
 EOL
-        # expect(output).to eq(table)
+        expect(output).to eq(table)
 
-        # expect(app.articles_path).to eq("/posts")
-        # expect(app.articles2_path).to eq("/posts")
-        # expect(app.new_article_path).to eq("/posts/new")
-        # expect(app.article_path(1)).to eq("/posts/1")
-        # expect(app.edit_article_path(1)).to eq("/posts/1/edit")
+        expect(app.articles_path).to eq("/posts")
+        expect(app.articles2_path).to eq("/posts")
+        expect(app.new_article_path).to eq("/posts/new")
+        expect(app.article_path(1)).to eq("/posts/1")
+        expect(app.edit_article_path(1)).to eq("/posts/1/edit")
       end
     end
 
