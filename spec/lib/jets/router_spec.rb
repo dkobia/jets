@@ -552,7 +552,7 @@ EOL
         expect(output).to eq(table)
       end
 
-      it "get posts 1" do
+      it "get posts resources" do
         router.draw do
           resources :posts
         end
@@ -576,7 +576,7 @@ EOL
         expect(output).to eq(table)
       end
 
-      it "get posts" do
+      it "get posts create_route methods" do
         router.draw do
           get "posts", to: "posts#index"
           get "posts/new", to: "posts#new"
@@ -606,6 +606,11 @@ EOL
 +-----------+--------+----------------+-------------------+
 EOL
         expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/posts")
+        expect(app.new_post_path).to eq("/posts/new")
+        expect(app.post_path(1)).to eq("/posts/1")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
       end
 
       # prettier namespace method
@@ -1123,7 +1128,7 @@ EOL
     end
 
     context "regular create_route methods" do
-      it "resources posts get comments" do
+      it "resources users posts" do
         router.draw do
           resources :users, only: [] do
             get "posts", to: "posts#index"
@@ -1162,6 +1167,37 @@ EOL
         expect(app.edit_user_post_path(1, 2)).to eq("/users/1/posts/2/edit")
       end
 
+      it "posts as articles" do
+        router.draw do
+          # get "posts", to: "posts#index", as: "articles"
+          # get "posts", to: "posts#list", as: "articles2"
+          # get "posts/new", to: "posts#new", as: "new_article"
+          # get "posts/:id", to: "posts#show", as: "article"
+          # get "posts/:id/edit", to: "posts#edit", as: "edit_article"
+          get "posts", to: "posts#no_as" # should not create route
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        puts output
+        table =<<EOL
++--------------+------+----------------+-------------------+
+|      As      | Verb |      Path      | Controller#action |
++--------------+------+----------------+-------------------+
+| articles     | GET  | posts          | posts#index       |
+| articles2    | GET  | posts          | posts#list        |
+| new_article  | GET  | posts/new      | posts#new         |
+| article      | GET  | posts/:id      | posts#show        |
+| edit_article | GET  | posts/:id/edit | posts#edit        |
++--------------+------+----------------+-------------------+
+EOL
+        # expect(output).to eq(table)
+
+        # expect(app.articles_path).to eq("/posts")
+        # expect(app.articles2_path).to eq("/posts")
+        # expect(app.new_article_path).to eq("/posts/new")
+        # expect(app.article_path(1)).to eq("/posts/1")
+        # expect(app.edit_article_path(1)).to eq("/posts/1/edit")
+      end
     end
 
     ########################

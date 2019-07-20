@@ -48,9 +48,10 @@ class Jets::Router::MethodCreator
       end
     end
 
-    def full_meth_name(suffix)
+    def full_meth_name(suffix=nil)
       as =  @as || meth_name
-      underscore("#{as}_#{suffix}")
+      name = [as, suffix].compact.join('_')
+      underscore(name)
     end
 
     def path_method

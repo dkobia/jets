@@ -32,14 +32,14 @@ class Jets::Router
       class_name = "Jets::Router::MethodCreator::#{action.camelize}"
       klass = class_name.constantize # Index, Show, Edit, New
       code = klass.new(@options, @scope)
-      # puts "define_#{action}_method:".color(:yellow)
-      # puts code.path_method.color(:blue)
-      def_meth code.path_method
+      # puts "define_#{action}_method:".color(:yellow) if code.path_method
+      # puts code.path_method.color(:blue) if code.path_method
+      def_meth(code.path_method) if code.path_method
     end
 
     def create_root_helper
       code = Jets::Router::MethodCreator::Root.new(@options, @scope)
-      def_meth code.path_method
+      def_meth(code.path_method)
     end
 
     def def_meth(str)

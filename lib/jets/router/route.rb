@@ -54,7 +54,7 @@ class Jets::Router
         Jets::Router::MethodCreator::Generic
       end
 
-      klass.new(@options, @scope).meth_name
+      klass.new(@options, @scope).full_meth_name(nil)
     end
 
     # IE: standard: posts/:id/edit
