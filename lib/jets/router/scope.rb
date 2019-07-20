@@ -22,15 +22,7 @@ module Jets
         items = walk_parents do |current, i, result|
           mod = current.options[:module]
           next unless mod
-
-          case current.from
-          when :resources, :resource
-            unless i == 0 # since resources and resource create an extra 'scope' layer
-              result.unshift(mod)
-            end
-          else # namespace or scope
-            result.unshift(mod)
-          end
+          result.unshift(mod)
         end
 
         items.compact!

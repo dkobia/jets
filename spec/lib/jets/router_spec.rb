@@ -1292,8 +1292,8 @@ EOL
     context "debugging" do
       it "debug1" do
         router.draw do
-          resources :posts do
-            resource :profile
+          resource :profile, module: 'admin' do
+            resources :users
           end
         end
         output = Jets::Router.help(router.routes).to_s
