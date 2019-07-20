@@ -91,7 +91,7 @@ EOL
           end
         end
 
-        options = {:to=>"posts#index", :path=>"posts", :method=>:get}
+        options = {:to=>"posts#index", :path=>"posts", :method=>:get, from_scope: true}
         creator = Jets::Router::MethodCreator::Index.new(options, captured_scope)
         expect(creator.path_method).to eq(<<~EOL)
           def admin_posts_path
@@ -110,7 +110,7 @@ EOL
           end
         end
 
-        options = {:to=>"posts#index", :path=>"posts", :method=>:get}
+        options = {:to=>"posts#index", :path=>"posts", :method=>:get, from_scope: true}
         creator = Jets::Router::MethodCreator::Index.new(options, captured_scope)
         expect(creator.path_method).to eq(<<~'EOL')
           def user_posts_path(user_id)
@@ -576,7 +576,7 @@ EOL
         expect(output).to eq(table)
       end
 
-      it "get posts 2" do
+      it "get posts" do
         router.draw do
           get "posts", to: "posts#index"
           get "posts/new", to: "posts#new"
@@ -1122,9 +1122,51 @@ EOL
       end
     end
 
+    context "regular create_route methods" do
+      it "resources posts get comments" do
+        router.draw do
+          resources :users, only: [] do
+            get "posts", to: "posts#index"
+            get "posts/new", to: "posts#new"
+            get "posts/:id", to: "posts#show"
+            post "posts", to: "posts#create"
+            get "posts/:id/edit", to: "posts#edit"
+            put "posts/:id", to: "posts#update"
+            post "posts/:id", to: "posts#update"
+            patch "posts/:id", to: "posts#update"
+            delete "posts/:id", to: "posts#delete"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++----------------+--------+-------------------------------+-------------------+
+|       As       |  Verb  |             Path              | Controller#action |
++----------------+--------+-------------------------------+-------------------+
+| user_posts     | GET    | users/:user_id/posts          | posts#index       |
+| new_user_post  | GET    | users/:user_id/posts/new      | posts#new         |
+| user_post      | GET    | users/:user_id/posts/:id      | posts#show        |
+|                | POST   | users/:user_id/posts          | posts#create      |
+| edit_user_post | GET    | users/:user_id/posts/:id/edit | posts#edit        |
+|                | PUT    | users/:user_id/posts/:id      | posts#update      |
+|                | POST   | users/:user_id/posts/:id      | posts#update      |
+|                | PATCH  | users/:user_id/posts/:id      | posts#update      |
+|                | DELETE | users/:user_id/posts/:id      | posts#delete      |
++----------------+--------+-------------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.user_posts_path(1)).to eq("/users/1/posts")
+        expect(app.new_user_post_path(1)).to eq("/users/1/posts/new")
+        expect(app.user_post_path(1, 2)).to eq("/users/1/posts/2")
+        expect(app.edit_user_post_path(1, 2)).to eq("/users/1/posts/2/edit")
+      end
+
+    end
+
     ########################
-    # useful for debugging code
-    context "simple routes" do
+    # useful for debugging
+    context "debugging" do
       it "debug1" do
         router.draw do
           resources :posts, only: [] do
@@ -1132,29 +1174,8 @@ EOL
           end
         end
         output = Jets::Router.help(router.routes).to_s
+        # puts output
         expect(app.post_comments_path(1)).to eq("/posts/1/comments")
-      end
-
-      it "debug2" do
-        router.draw do
-          resources :posts, only: :index
-        end
-        expect(app.posts_path).to eq("/posts")
-      end
-
-      it "debug3" do
-        router.draw do
-          resources :posts, only: [] do
-            get "comments", to: "comments#index" #, as: :my_users_posts
-          end
-        end
-
-        output = Jets::Router.help(router.routes).to_s
-        table =<<EOL
-EOL
-        # expect(output).to eq(table)
-
-        # expect(app.user_post_path(1,2)).to eq("/users/1/posts/2")
       end
     end
   end

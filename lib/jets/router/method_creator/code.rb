@@ -28,8 +28,8 @@ class Jets::Router::MethodCreator
     end
 
     def full_path
-      prefix = @scope.full_prefix
-      path = [prefix, @options[:path]].compact.join('/')
+      route = Jets::Router::Route.new(@options, @scope)
+      route.compute_path
     end
 
     def action
@@ -40,11 +40,12 @@ class Jets::Router::MethodCreator
       @scope&.full_as
     end
 
-    # The path_method is mainly use to generate method names.
-    # But it's also sometimes use for the result, like in index.rb.
-    # TODO: Clean this up and make more understanable.
+    # The path_method is used to generate method names.
+    # TODO: Make more understanable.
     def path_trunk
-      @path.to_s.split('/').first unless @scope.from == :resources || @scope.from == :resource
+      unless %w[resource resources].include?(@scope.from.to_s) && @options[:from_scope]
+        @path.to_s.split('/').first
+      end
     end
 
     def full_meth_name(suffix)

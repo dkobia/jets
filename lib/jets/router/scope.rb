@@ -19,7 +19,7 @@ module Jets
       end
 
       def full_module
-        items = walk_scope_parents do |current, i, result|
+        items = walk_parents do |current, i, result|
           mod = current.options[:module]
           next unless mod
 
@@ -38,26 +38,16 @@ module Jets
       end
 
       def full_prefix
-        items = walk_scope_parents do |current, i, result|
+        items = walk_parents do |current, i, result|
           prefix = current.options[:prefix]
           next unless prefix
 
           case current.from
           when :resources, :resource
-            # For the last node, we always do not add the path part since the path is already included in the prefix
-            # for the resources macro
-            if i == 0
-              prefix = prefix.to_s.split('/')[0..-2].join('/') # drop the last element
-              result.unshift(prefix) unless prefix == ''
-            else
-              # Drop last items which is the path part because resources can be used with :prefix option.
-              # With resources, the prefix option adds the prefix to the resource item name.
-              # This creates an name like: `admin/posts`. We only want the posts part.
-              variable = prefix.to_s.split('/')[0..-1].last
-              variable = ":#{variable.singularize}_id"
-              result.unshift(variable)
-              result.unshift(prefix)
-            end
+            variable = prefix.to_s.split('/').last
+            variable = ":#{variable.singularize}_id"
+            result.unshift(variable)
+            result.unshift(prefix)
           else # namespace or scope
             result.unshift(prefix)
           end
@@ -82,7 +72,7 @@ module Jets
         items.join('_')
       end
 
-      def walk_scope_parents
+      def walk_parents
         current, i, result = self, 0, []
         while current
           yield(current, i, result)

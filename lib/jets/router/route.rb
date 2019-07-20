@@ -26,6 +26,11 @@ class Jets::Router
       # Also, this helps to keep the method creator logic more simple.
       #
       prefix = @scope.full_prefix
+      if @options[:from_scope]
+        prefix = prefix.split('/')[0..-3].join('/')
+        prefix = nil if prefix == ''
+      end
+
       [prefix, @options[:path]].compact.join('/')
     end
 
