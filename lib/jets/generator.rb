@@ -9,7 +9,7 @@ class Jets::Generator
       new(generator, *args).run(:revoke)
     end
 
-    def help(args=ARGV)
+    def help(args=ARGV.clone)
       require_generators
 
       # `jets generate -h` results in:
