@@ -38,7 +38,7 @@ Generates:
 
 ### 2.1 only and except options
 
-You can use the `only` and `except` options with the `resources` method to select which routes you want.
+You can use the `only` and `except` options with the `resources` method to select which routes you want to create.
 
 Here's an example with `only`:
 
@@ -247,8 +247,8 @@ And their corresponding named routes helper methods.
 
 As / Prefix | Helper
 --- | ---
-preview_post | preview_post_path
-list | list_path(id)
+preview_post | preview_post_path(post_id)
+list | list_path
 
 If you have multiple routes to add, you can also use the block form of `member` or `resources`:
 
