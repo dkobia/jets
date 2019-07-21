@@ -69,7 +69,7 @@ EOL
         expect(app.posts_path).to eq("/posts")
         expect(app.new_post_path).to eq("/posts/new")
         expect(app.post_path(1)).to eq("/posts/1")
-        expect(app.edit_post_comment_path(1, 2)).to eq("/posts/1/comments/2/edit")
+        expect(app.edit_post_path(1)).to eq("/posts/1/edit")
 
         expect(app.post_comments_path(1)).to eq("/posts/1/comments")
         expect(app.new_post_comment_path(1)).to eq("/posts/1/comments/new")
@@ -1365,8 +1365,8 @@ EOL
     context "debugging" do
       it "debug2" do
         router.draw do
-          resources :posts, only: [] do
-            # get "preview", on: :member
+          resources :posts do
+            get "preview", on: :member
             get "list", on: :collection
           end
         end

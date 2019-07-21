@@ -2,15 +2,17 @@
 title: Routing Guide
 ---
 
-This is a thorough guide of how Jets Routing works.
-
 ## 1. Introduction
+
+Jets routing translates your `routes.rb` file into API Gateway resources and connects them to your Lambda functions. It also generates helper methods for URL paths for your convenience.
 
 ## 2. Resources
 
-## 3. Named Routes Helper Methods
+Jets routing leverages a REST architecture design by default.  A key component of a REST are resources. With HTTP, we can take actions like GET, POST, PUT, PATCH, DELETE on resources. Jets uses HTTP verbs and RESTful resources to achieve the common CRUD pattern: Create, Read, Update, and Delete.
 
-Named routes helper methods are generated from your routes declarations.  Named route helpers are generated for these CRUD methods: index, new, edit, show.  For example:
+With the `resources` method, Jets creates CRUD-related routes. Example:
+
+config/routes.rb:
 
 ```ruby
 resources :posts
@@ -34,7 +36,9 @@ Generates:
 +-----------+--------+----------------+-------------------+
 ```
 
-The as column shows the prefix of the named route helper name.
+## 3. Named Routes Helper Methods
+
+Jets automatically generates named routes helper methods from your routes declarations.  Named route helpers are generated for these CRUD methods: index, new, edit, show.  The **As** column in the previous routes table shows the prefix of the named route helper name. They map to generated named routes helper methods:
 
 As / Prefix | Helper
 --- | ---
@@ -43,7 +47,9 @@ new_post | new_post_path
 post | post_path(id)
 edit_post | edit_post_path(id)
 
-Named routes helper methods are also generated when you use the `as` option.  Example:
+Named routes helper methods are also generated when you use the `as` option explicitly.
+
+### as option
 
 ```ruby
 get "list", to: "posts#index", as: :list
@@ -63,20 +69,91 @@ Generates:
 +------+------+----------+-------------------+
 ```
 
+Here are their named routes helper methods.
+
 As / Prefix | Helper
 --- | ---
 list | list_path
-view  | view_path(id)
+view | view_path(id)
 
-By convention, named routes are not generated for every single one of your route declarations. If they were generated for every route declaration, Jets would have to probably use the path as a way to avoid method name collisions. Often, this leads to long helper method names that are hard to remember.
+### member and collection options
+
+Named routes helper methods are also generated when you use the `member` or `collection` keywords with your route.  Example:
+
+```ruby
+resources :posts, only: [] do
+  get "preview", on: :member
+  get "list", on: :collection
+end
+```
+
+Generates:
+
+```
++--------------+------+------------------------+-------------------+
+|      As      | Verb |          Path          | Controller#action |
++--------------+------+------------------------+-------------------+
+| preview_post | GET  | posts/:post_id/preview | posts#preview     |
+| list_posts   | GET  | posts/list             | posts#list        |
++--------------+------+------------------------+-------------------+
+```
+
+And their corresponding named routes helper methods.
+
+As / Prefix | Helper
+--- | ---
+preview_post | preview_post_path
+list | list_path(id)
+
+### Named routes path and url helper
+
+For each `_path` method there is a corresponding `_url` method.  The `_url` method includes the host. Here's an table with examples:
+
+As / Prefix | Path Helper | Url Helper
+--- | --- | ---
+posts | posts_path => /posts | posts_url => localhost:8888/posts
+new_post | new_post_path => /posts/new | new_post_url => localhost:8888/posts/new
+post | post_path(1) => /posts/1 | post_url(1) => localhost:8888/posts/1
+edit_post | edit_post_path(1) => /posts/1/edit | edit_post_url(1) => localhost:8888/posts/1/edit
 
 ## 3. Singular Resource
 
-## 4. Namespace
+There are sometimes resource that always look up the same id. A good example of this is a `profile` resource. The profile resource always looks up the currently logged-in user. We do not need to have the user id as a part of the url path. The singular `resource` is useful here. Example:
 
-## 5. Nested Resources
+```ruby
+resource :profile
+```
 
-Nested resources are supported:
+Generates these routes:
+
+```
++--------------+--------+--------------+-------------------+
+|      As      |  Verb  |     Path     | Controller#action |
++--------------+--------+--------------+-------------------+
+| new_profile  | GET    | profile/new  | profiles#new      |
+| profile      | GET    | profile      | profiles#show     |
+|              | POST   | profile      | profiles#create   |
+| edit_profile | GET    | profile/edit | profiles#edit     |
+|              | PUT    | profile      | profiles#update   |
+|              | POST   | profile      | profiles#update   |
+|              | PATCH  | profile      | profiles#update   |
+|              | DELETE | profile      | profiles#delete   |
++--------------+--------+--------------+-------------------+
+```
+
+Here are the generated named routes helpers:
+
+As / Prefix | Helper
+--- | ---
+new_profile | new_profile_path
+profile | profile_path
+edit_profile | edit_profile_path
+
+There are no arguments for any of the generated helper methods. They are not needed. Also notice, there is no index action route.
+
+## 4. Nested Resources
+
+Nesting resources are supported. Example:
 
 ```ruby
 resources :posts do
@@ -111,7 +188,126 @@ Results in:
 +-------------------+--------+----------------------------------+-------------------+
 ```
 
-## 6. Helper Host
+This makes for nice clean URLs. For example, we can get all the comments that belong to a post with `/posts/1/comments`.
+
+Here are the generated named routes helpers:
+
+As / Prefix | Helper
+--- | ---
+posts | posts_path
+new_post | new_post_path
+post | post_path(post_id)
+edit_post | edit_post_path(post_id)
+post_comments | post_comments_path(post_id)
+new_post_comment | new_post_comment_path(post_id)
+post_comment | post_comment_path(post_id, id)
+edit_post_comment | edit_post_comment_path(post_id, id)
+
+Note: When resources are nested the parent path variable names all become `:post_id`.  This is because path variable siblings must all be the same for API Gateway. More details here: [API Gateway Considerations]({% link _docs/considerations/api-gateway.md %}).
+
+## 4. Namespace
+
+Namespacing is also supported.  Unlike nested resources, namespaces do not manage or create any **resource**. For example, there's no `:admin_id` variable. Namespacing is useful for organizing code. Example:
+
+```ruby
+namespace :admin do
+  resources :posts
+end
+```
+
+Generates:
+
+```
++-----------------+--------+----------------------+--------------------+
+|       As        |  Verb  |         Path         | Controller#action  |
++-----------------+--------+----------------------+--------------------+
+| admin_posts     | GET    | admin/posts          | admin/posts#index  |
+| new_admin_post  | GET    | admin/posts/new      | admin/posts#new    |
+| admin_post      | GET    | admin/posts/:id      | admin/posts#show   |
+|                 | POST   | admin/posts          | admin/posts#create |
+| edit_admin_post | GET    | admin/posts/:id/edit | admin/posts#edit   |
+|                 | PUT    | admin/posts/:id      | admin/posts#update |
+|                 | POST   | admin/posts/:id      | admin/posts#update |
+|                 | PATCH  | admin/posts/:id      | admin/posts#update |
+|                 | DELETE | admin/posts/:id      | admin/posts#delete |
++-----------------+--------+----------------------+--------------------+
+```
+
+Namespacing affects:
+
+1. as helper method name: It adds an `admin` to the names.
+2. path: The path gets an `admin` **prefix**
+3. controller namespace: The controllers are within an `admin` module.
+
+The `namespace` method uses a more general `scope` method. `namespace` is a `scope` declaration with the `as`, `prefix`, and `module` options set to the `namespace` value.
+
+## 7. Scope
+
+Scope is the more general method in the routes DSL. You can use it to set the `as`, `prefix`, and `module`. Some examples to help explain:
+
+### prefix example
+
+```ruby
+scope :admin do
+  get "posts", to: "posts#index"
+end
+```
+
+Results in:
+
+```
++-------+------+-------------+-------------------+
+|  As   | Verb |    Path     | Controller#action |
++-------+------+-------------+-------------------+
+| posts | GET  | admin/posts | posts#index       |
++-------+------+-------------+-------------------+
+```
+
+Notice, only the path is affected.  You can also set the scope prefix with a hash option. IE: `scope prefix: :admin`
+
+### as example
+
+```ruby
+scope(as: :admin) do
+  get "posts/:id/edit", to: "posts#edit"
+end
+```
+
+Results in:
+
+```
++-----------------+--------+----------------+-------------------+
+|       As        |  Verb  |      Path      | Controller#action |
++-----------------+--------+----------------+-------------------+
+| edit_admin_post | GET    | posts/:id/edit | posts#edit        |
++-----------------+--------+----------------+-------------------+
+```
+
+Only the generated helper method is affected.
+
+### module example
+
+```ruby
+scope(module: :admin) do
+  get "posts", to: "posts#index"
+end
+```
+
+Results in:
+
+```
++-------+------+-------+-------------------+
+|  As   | Verb | Path  | Controller#action |
++-------+------+-------+-------------------+
+| posts | GET  | posts | admin/posts#index |
++-------+------+-------+-------------------+
+```
+
+Only the controller module is affected.
+
+## 8. Helper Host
+
+The named routes `_url` methods, will infer the hostname that the request came from as part of the request by default.  If you need to configure it explicitly, then you can with `config.helpers.host`. Example:
 
 ```ruby
 Jets.application.configure do
