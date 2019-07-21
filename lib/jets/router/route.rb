@@ -34,8 +34,6 @@ class Jets::Router
         end
         prefix = nil if prefix == ''
       end
-      # puts "compute_path @scope.full_prefix #{@scope.full_prefix}"
-      # puts "compute_path prefix #{prefix}"
 
       [prefix, @options[:path]].compact.join('/')
     end

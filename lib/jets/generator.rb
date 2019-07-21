@@ -94,7 +94,6 @@ class Jets::Generator
     g.stylesheets     false
     g.javascripts     false
     g.assets          false
-    puts "Jets.config.mode #{Jets.config.mode}".color(:yellow)
     if Jets.config.mode == 'api'
       g.api_only = true
       g.template_engine nil
