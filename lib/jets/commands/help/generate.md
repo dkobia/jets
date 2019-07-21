@@ -12,13 +12,10 @@ Please choose a generator below.
 
 Jets:
 
+    application_record
     controller
-    generator
     helper
-    integration_test
-    jbuilder
     job
-    mailer
     migration
     model
     resource

@@ -47,6 +47,18 @@ class Jets::Generator
       # lazy require so Rails const is only defined when using generators
       require "rails/generators"
       require "rails/configuration"
+      require_active_job_generator
+    end
+
+    def require_active_job_generator
+      require "active_job"
+      require "rails/generators/job/job_generator"
+      # Override the source_root
+      Rails::Generators::JobGenerator.class_eval do
+        def self.source_root
+          File.expand_path("../generator/templates/active_job/job/templates", __FILE__)
+        end
+      end
     end
   end
 
