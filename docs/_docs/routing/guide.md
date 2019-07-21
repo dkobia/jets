@@ -36,9 +36,50 @@ Generates:
 +-----------+--------+----------------+-------------------+
 ```
 
+### 2.1 only and except options
+
+You can use the `only` and `except` options with the `resources` method to select which routes you want added.
+
+Here's an example with `only`:
+
+```ruby
+resources :posts, only: %w[index show]
+```
+
+Results in:
+
+```
++-------+------+-----------+-------------------+
+|  As   | Verb |   Path    | Controller#action |
++-------+------+-----------+-------------------+
+| posts | GET  | posts     | posts#index       |
+| post  | GET  | posts/:id | posts#show        |
++-------+------+-----------+-------------------+
+```
+
+Here's an example with `except`:
+
+```ruby
+resources :posts, except: %w[new delete edit update]
+```
+
+Results in:
+
+```
++-------+------+-----------+-------------------+
+|  As   | Verb |   Path    | Controller#action |
++-------+------+-----------+-------------------+
+| posts | GET  | posts     | posts#index       |
+| post  | GET  | posts/:id | posts#show        |
+|       | POST | posts     | posts#create      |
++-------+------+-----------+-------------------+
+```
+
 ## 3. Named Routes Helper Methods
 
-Jets automatically generates named routes helper methods from your routes declarations.  Named route helpers are generated for these CRUD methods: index, new, edit, show.  The **As** column in the previous routes table shows the prefix of the named route helper name. They map to generated named routes helper methods:
+Jets automatically generates named routes helper methods from your routes declarations.  Named route helpers are generated for these CRUD-related controller actions: index, new, edit, show.
+
+The **As** column in the previous routes table shows the prefix of the named route helper name. They map to generated named routes helper methods:
 
 As / Prefix | Helper
 --- | ---

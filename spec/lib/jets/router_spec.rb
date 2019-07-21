@@ -1365,13 +1365,10 @@ EOL
     context "debugging" do
       it "debug2" do
         router.draw do
-          resources :posts do
-            get "preview", on: :member
-            get "list", on: :collection
-          end
+          resources :posts, except: %w[new delete edit update]
         end
         output = Jets::Router.help(router.routes).to_s
-        # puts output
+        puts output
         # expect(app.post_comments_path(1)).to eq("/posts/1/comments")
       end
     end
