@@ -377,7 +377,7 @@ Only the controller module is affected.
 
 ## 9. Helper Host
 
-The named routes `_url` methods, will infer the hostname that the request came from as part of the request by default.  If you need to configure it explicitly, then you can with `config.helpers.host`. Example:
+The named routes `_url` methods, will infer the hostname from the request by default.  If you need to configure it explicitly, then you can with `config.helpers.host`. Example:
 
 ```ruby
 Jets.application.configure do
