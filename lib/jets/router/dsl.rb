@@ -101,6 +101,18 @@ class Jets::Router
       delete name, o.build(:delete) if f.yes?(:delete)
     end
 
+    def member
+      @on_option = :member
+      yield
+      @on_option = nil
+    end
+
+    def collection
+      @on_option = :collection
+      yield
+      @on_option = nil
+    end
+
     # If a block has pass then we assume the resources will be nested and then prefix
     # the param name with the resource. IE: post_id instead of id
     # This avoids an API Gateway parent sibling variable collision.

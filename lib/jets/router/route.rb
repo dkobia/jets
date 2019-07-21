@@ -32,9 +32,14 @@ class Jets::Router
         else
           prefix = prefix.split('/')[0..-3].join('/')
         end
-        prefix = nil if prefix == ''
       end
 
+      case @options[:on]
+      when :collection
+        prefix = prefix.split('/')[0..-2].join('/')
+      end
+
+      prefix = nil if prefix == ''
       [prefix, @options[:path]].compact.join('/')
     end
 

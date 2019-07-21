@@ -1288,7 +1288,7 @@ EOL
     end
 
     context "infer to option" do
-      it "debug1" do
+      it "credit cards" do
         router.draw do
           get "credit_cards/open"
           get "credit_cards/debit"
@@ -1310,11 +1310,65 @@ EOL
       end
     end
 
+    context "member and collection" do
+      it "direct option" do
+        router.draw do
+          resources :posts, only: [] do
+            get "preview", on: :member
+            get "list", on: :collection
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------+------+------------------------+-------------------+
+|      As      | Verb |          Path          | Controller#action |
++--------------+------+------------------------+-------------------+
+| preview_post | GET  | posts/:post_id/preview | posts#preview     |
+| list_posts   | GET  | posts/list             | posts#list        |
++--------------+------+------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.preview_post_path(1)).to eq("/posts/1/preview")
+        expect(app.list_posts_path).to eq("/posts/list")
+      end
+
+      it "nested resources member" do
+        router.draw do
+          resources :posts, only: [] do
+            member do
+              get "preview"
+            end
+            collection do
+              get "list"
+            end
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++--------------+------+------------------------+-------------------+
+|      As      | Verb |          Path          | Controller#action |
++--------------+------+------------------------+-------------------+
+| preview_post | GET  | posts/:post_id/preview | posts#preview     |
+| list_posts   | GET  | posts/list             | posts#list        |
++--------------+------+------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.preview_post_path(1)).to eq("/posts/1/preview")
+        expect(app.list_posts_path).to eq("/posts/list")
+      end
+    end
+
     ########################
     # useful for debugging
     context "debugging" do
-      it "debug1" do
+      it "debug2" do
         router.draw do
+          resources :posts, only: [] do
+            # get "preview", on: :member
+            get "list", on: :collection
+          end
         end
         output = Jets::Router.help(router.routes).to_s
         # puts output

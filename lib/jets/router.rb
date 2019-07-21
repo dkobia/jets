@@ -27,6 +27,7 @@ module Jets
       # TODO: Can use it to add additional things like authorization_type
       # Would be good to add authorization_type at the controller level also
       infer_to_option!(options)
+      handle_on!(options)
       MethodCreator.new(options, @scope).define_url_helper!
       @routes << Route.new(options, @scope)
     end
@@ -49,6 +50,10 @@ module Jets
       if items.size == 2
         options[:to] = items.join('#')
       end
+    end
+
+    def handle_on!(options)
+      options[:on] = @on_option if @on_option
     end
 
     def api_mode?
