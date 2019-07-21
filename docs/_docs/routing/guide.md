@@ -49,7 +49,7 @@ edit_post | edit_post_path(id)
 
 Named routes helper methods are also generated when you use the `as` option explicitly.
 
-### as option
+### 3.1 as option
 
 ```ruby
 get "list", to: "posts#index", as: :list
@@ -76,11 +76,11 @@ As / Prefix | Helper
 list | list_path
 view | view_path(id)
 
-### member and collection options
+### 3.2 member and collection options
 
 Named routes helper methods are also generated when you use the `member` or `collection` keywords with your route.  Refer to the members and collections docs below for examples.
 
-### Named routes path and url helper
+### 3.3 Named routes path and url helper
 
 For each `_path` method there is a corresponding `_url` method.  The `_url` method includes the host. Here's an table with examples:
 
@@ -274,7 +274,7 @@ The `namespace` method uses a more general `scope` method. `namespace` is a `sco
 
 Scope is the more general method in the routes DSL. You can use it to set the `as`, `prefix`, and `module`. Some examples to help explain:
 
-### prefix example
+### 8.1 prefix example
 
 ```ruby
 scope :admin do
@@ -294,7 +294,7 @@ Results in:
 
 Notice, only the path is affected.  You can also set the scope prefix with a hash option. IE: `scope prefix: :admin`
 
-### as example
+### 8.2 as example
 
 ```ruby
 scope(as: :admin) do
@@ -314,7 +314,7 @@ Results in:
 
 Only the generated helper method is affected.
 
-### module example
+### 8.3 module example
 
 ```ruby
 scope(module: :admin) do
