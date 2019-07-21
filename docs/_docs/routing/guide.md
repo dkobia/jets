@@ -2,6 +2,26 @@
 title: Routing Guide
 ---
 
+- [1. Introduction](#1-introduction)
+- [2. Resources](#2-resources)
+  * [2.1 only and except options](#21-only-and-except-options)
+  * [2.2 resources options](#22-resources-options)
+  * [2.3 param](#23-param)
+- [3. Named Routes Helper Methods](#3-named-routes-helper-methods)
+  * [3.1 as option](#31-as-option)
+  * [3.2 member and collection options](#32-member-and-collection-options)
+  * [3.3 Named routes path and url helper](#33-named-routes-path-and-url-helper)
+- [4. Singular Resource](#4-singular-resource)
+- [5. Nested Resources](#5-nested-resources)
+- [6. Resource Members and Collections](#6-resource-members-and-collections)
+- [7. Namespace](#7-namespace)
+- [8. Prefix](#8-prefix)
+- [9. Scope](#9-scope)
+  * [9.1 prefix example](#91-prefix-example)
+  * [9.2 as example](#92-as-example)
+  * [9.3 module example](#93-module-example)
+- [10. Configuring Host](#10-configuring-host)
+
 ## 1. Introduction
 
 Jets routing translates your `routes.rb` file into API Gateway resources and connects them to your Lambda functions. It also generates helper methods for URL paths for your convenience.
@@ -74,6 +94,45 @@ Results in:
 |       | POST | posts     | posts#create      |
 +-------+------+-----------+-------------------+
 ```
+
+### 2.2 resources options
+
+Resources supports several options: module, prefix, as, controller.
+
+* module: adds a module name to the controller
+* prefix: adds a prefix to the path
+* as: changes the name of the generated helper methods
+* controller: changes controller that it maps to
+
+The options can be provided directly to `resources` method. You may also want to look at using the `scope`, `prefix` which can provide similar results with less duplication by making use of blocks.  The `scope` and `prefix` docs are below.
+
+### 2.3 param
+
+You can change the variable identifier in the path with the `param` option.  Example:
+
+```ruby
+resources :posts, param: :my_post_id
+```
+
+Results in:
+
+```
++-----------+--------+------------------------+-------------------+
+|    As     |  Verb  |          Path          | Controller#action |
++-----------+--------+------------------------+-------------------+
+| posts     | GET    | posts                  | posts#index       |
+| new_post  | GET    | posts/new              | posts#new         |
+| post      | GET    | posts/:my_post_id      | posts#show        |
+|           | POST   | posts                  | posts#create      |
+| edit_post | GET    | posts/:my_post_id/edit | posts#edit        |
+|           | PUT    | posts/:my_post_id      | posts#update      |
+|           | POST   | posts/:my_post_id      | posts#update      |
+|           | PATCH  | posts/:my_post_id      | posts#update      |
+|           | DELETE | posts/:my_post_id      | posts#delete      |
++-----------+--------+------------------------+-------------------+
+```
+
+Generally, it is recommended to **not** override the param identifier default.
 
 ## 3. Named Routes Helper Methods
 
@@ -274,7 +333,6 @@ Also results in:
 +--------------+------+------------------------+-------------------+
 ```
 
-
 ## 7. Namespace
 
 Namespacing is also supported.  Unlike nested resources, namespaces do not manage or create any **resource**. For example, there's no `:admin_id` variable. Namespacing is useful for organizing code. Example:
@@ -311,14 +369,42 @@ Namespacing affects:
 
 The `namespace` method uses a more general `scope` method. `namespace` is a `scope` declaration with the `as`, `prefix`, and `module` options set to the `namespace` value.
 
-## 8. Scope
+## 8. Prefix
+
+If you only want to add a prefix to your resources paths, the `prefix` method can be used. Example:
+
+```ruby
+prefix :admin do
+  resources :posts
+end
+```
+
+Results in:
+
+```
++-----------+--------+----------------------+-------------------+
+|    As     |  Verb  |         Path         | Controller#action |
++-----------+--------+----------------------+-------------------+
+| posts     | GET    | admin/posts          | posts#index       |
+| new_post  | GET    | admin/posts/new      | posts#new         |
+| post      | GET    | admin/posts/:id      | posts#show        |
+|           | POST   | admin/posts          | posts#create      |
+| edit_post | GET    | admin/posts/:id/edit | posts#edit        |
+|           | PUT    | admin/posts/:id      | posts#update      |
+|           | POST   | admin/posts/:id      | posts#update      |
+|           | PATCH  | admin/posts/:id      | posts#update      |
+|           | DELETE | admin/posts/:id      | posts#delete      |
++-----------+--------+----------------------+-------------------+
+```
+
+## 9. Scope
 
 Scope is the more general method in the routes DSL. You can use it to set the `as`, `prefix`, and `module`. Some examples to help explain:
 
-### 8.1 prefix example
+### 9.1 prefix example
 
 ```ruby
-scope :admin do
+scope prefix: :admin do
   get "posts", to: "posts#index"
 end
 ```
@@ -333,9 +419,9 @@ Results in:
 +-------+------+-------------+-------------------+
 ```
 
-Notice, only the path is affected.  You can also set the scope prefix with a hash option. IE: `scope prefix: :admin`
+Notice, only the path is affected.  You can also set the scope prefix a string or symbol option. IE: `scope :admin`
 
-### 8.2 as example
+### 9.2 as example
 
 ```ruby
 scope(as: :admin) do
@@ -355,7 +441,7 @@ Results in:
 
 Only the generated helper method is affected.
 
-### 8.3 module example
+### 9.3 module example
 
 ```ruby
 scope(module: :admin) do
@@ -375,7 +461,7 @@ Results in:
 
 Only the controller module is affected.
 
-## 9. Helper Host
+## 10. Configuring Host
 
 The named routes `_url` methods, will infer the hostname from the request by default.  If you need to configure it explicitly, then you can with `config.helpers.host`. Example:
 

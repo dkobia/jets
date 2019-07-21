@@ -11,6 +11,10 @@ class Jets::Router
       scope(module: ns, prefix: ns, as: ns, from: :namespace, &block)
     end
 
+    def prefix(prefix, &block)
+      scope(prefix: prefix, &block)
+    end
+
     # scope supports three options: module, prefix and as.
     # Jets vs Rails:
     #   module - module
@@ -38,7 +42,7 @@ class Jets::Router
         scope_options = scope_options!(item, options)
         scope_options[:from] = :resources # flag for MethodCreator logic: to handle method_name_leaf and more
         scope(scope_options) do
-          resources_each(item, options, block_given?)
+          each_resources(item, options, block_given?)
           yield if block_given?
         end
       end
@@ -60,7 +64,7 @@ class Jets::Router
       }
     end
 
-    def resources_each(name, options={}, has_block=nil)
+    def each_resources(name, options={}, has_block=nil)
       o = Resources::Options.new(name, options)
       f = Resources::Filter.new(name, options)
       param = default_param(has_block, name, options)
@@ -81,13 +85,13 @@ class Jets::Router
         scope_options = scope_options!(item, options)
         scope_options[:from] = :resource # flag for MethodCreator logic: to handle method_name_leaf and more
         scope(scope_options) do
-          resource_each(item, options, block_given?)
+          each_resource(item, options, block_given?)
           yield if block_given?
         end
       end
     end
 
-    def resource_each(name, options={}, has_block=nil)
+    def each_resource(name, options={}, has_block=nil)
       o = Resources::Options.new(name, options.merge(singular_resource: true))
       f = Resources::Filter.new(name, options)
 

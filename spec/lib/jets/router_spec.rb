@@ -1360,12 +1360,44 @@ EOL
       end
     end
 
+    context "prefix" do
+      it "admin posts" do
+        router.draw do
+          prefix :admin do
+            resources :posts
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------+--------+----------------------+-------------------+
+|    As     |  Verb  |         Path         | Controller#action |
++-----------+--------+----------------------+-------------------+
+| posts     | GET    | admin/posts          | posts#index       |
+| new_post  | GET    | admin/posts/new      | posts#new         |
+| post      | GET    | admin/posts/:id      | posts#show        |
+|           | POST   | admin/posts          | posts#create      |
+| edit_post | GET    | admin/posts/:id/edit | posts#edit        |
+|           | PUT    | admin/posts/:id      | posts#update      |
+|           | POST   | admin/posts/:id      | posts#update      |
+|           | PATCH  | admin/posts/:id      | posts#update      |
+|           | DELETE | admin/posts/:id      | posts#delete      |
++-----------+--------+----------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.posts_path).to eq("/admin/posts")
+        expect(app.new_post_path).to eq("/admin/posts/new")
+        expect(app.post_path(1)).to eq("/admin/posts/1")
+        expect(app.edit_post_path(1)).to eq("/admin/posts/1/edit")
+      end
+    end
+
     ########################
     # useful for debugging
     context "debugging" do
       it "debug2" do
         router.draw do
-          resources :posts, except: %w[new delete edit update]
+          resources :posts, param: :my_post_id
         end
         output = Jets::Router.help(router.routes).to_s
         puts output
