@@ -38,7 +38,7 @@ Generates:
 
 ### 2.1 only and except options
 
-You can use the `only` and `except` options with the `resources` method to select which routes you want added.
+You can use the `only` and `except` options with the `resources` method to select which routes you want.
 
 Here's an example with `only`:
 
