@@ -2,11 +2,12 @@
 title: Routing Guide
 ---
 
+{:.toc}
 - [1. Introduction](#1-introduction)
 - [2. Resources](#2-resources)
   * [2.1 only and except options](#21-only-and-except-options)
   * [2.2 resources options](#22-resources-options)
-  * [2.3 param](#23-param)
+  * [2.3 param identifier](#23-param-identifier)
 - [3. Named Routes Helper Methods](#3-named-routes-helper-methods)
   * [3.1 as option](#31-as-option)
   * [3.2 member and collection options](#32-member-and-collection-options)
@@ -106,7 +107,7 @@ Resources supports several options: module, prefix, as, controller.
 
 The options can be provided directly to `resources` method. You may also want to look at using the `scope`, `prefix` which can provide similar results with less duplication by making use of blocks.  The `scope` and `prefix` docs are below.
 
-### 2.3 param
+### 2.3 param identifier
 
 You can change the variable identifier in the path with the `param` option.  Example:
 
