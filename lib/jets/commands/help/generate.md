@@ -21,7 +21,6 @@ Jets:
     resource
     scaffold
     scaffold_controller
-    system_test
     task
 
 ActiveRecord:
