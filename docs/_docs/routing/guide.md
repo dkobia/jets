@@ -78,32 +78,7 @@ view | view_path(id)
 
 ### member and collection options
 
-Named routes helper methods are also generated when you use the `member` or `collection` keywords with your route.  Example:
-
-```ruby
-resources :posts, only: [] do
-  get "preview", on: :member
-  get "list", on: :collection
-end
-```
-
-Generates:
-
-```
-+--------------+------+------------------------+-------------------+
-|      As      | Verb |          Path          | Controller#action |
-+--------------+------+------------------------+-------------------+
-| preview_post | GET  | posts/:post_id/preview | posts#preview     |
-| list_posts   | GET  | posts/list             | posts#list        |
-+--------------+------+------------------------+-------------------+
-```
-
-And their corresponding named routes helper methods.
-
-As / Prefix | Helper
---- | ---
-preview_post | preview_post_path
-list | list_path(id)
+Named routes helper methods are also generated when you use the `member` or `collection` keywords with your route.  Refer to the members and collections docs below for examples.
 
 ### Named routes path and url helper
 
@@ -205,7 +180,61 @@ edit_post_comment | edit_post_comment_path(post_id, id)
 
 Note: When resources are nested the parent path variable names all become `:post_id`.  This is because path variable siblings must all be the same for API Gateway. More details here: [API Gateway Considerations]({% link _docs/considerations/api-gateway.md %}).
 
-## 4. Namespace
+## 5. Resource Members and Collections
+
+Within the resources block you can use the `member` or `collection` options as a shorthand to create additional resource related routes.  Example:
+
+```ruby
+resources :posts, only: [] do
+  get "preview", on: :member
+  get "list", on: :collection
+end
+```
+
+Generates:
+
+```
++--------------+------+------------------------+-------------------+
+|      As      | Verb |          Path          | Controller#action |
++--------------+------+------------------------+-------------------+
+| preview_post | GET  | posts/:post_id/preview | posts#preview     |
+| list_posts   | GET  | posts/list             | posts#list        |
++--------------+------+------------------------+-------------------+
+```
+
+And their corresponding named routes helper methods.
+
+As / Prefix | Helper
+--- | ---
+preview_post | preview_post_path
+list | list_path(id)
+
+If you have multiple routes to add, you can also use the block form of `member` or `resources`:
+
+```ruby
+resources :posts, only: [] do
+  member do
+    get "preview"
+  end
+  collection do
+    get "list"
+  end
+end
+```
+
+Also results in:
+
+```
++--------------+------+------------------------+-------------------+
+|      As      | Verb |          Path          | Controller#action |
++--------------+------+------------------------+-------------------+
+| preview_post | GET  | posts/:post_id/preview | posts#preview     |
+| list_posts   | GET  | posts/list             | posts#list        |
++--------------+------+------------------------+-------------------+
+```
+
+
+## 6. Namespace
 
 Namespacing is also supported.  Unlike nested resources, namespaces do not manage or create any **resource**. For example, there's no `:admin_id` variable. Namespacing is useful for organizing code. Example:
 
