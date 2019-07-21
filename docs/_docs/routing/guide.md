@@ -91,7 +91,7 @@ new_post | new_post_path => /posts/new | new_post_url => localhost:8888/posts/ne
 post | post_path(1) => /posts/1 | post_url(1) => localhost:8888/posts/1
 edit_post | edit_post_path(1) => /posts/1/edit | edit_post_url(1) => localhost:8888/posts/1/edit
 
-## 3. Singular Resource
+## 4. Singular Resource
 
 There are sometimes resource that always look up the same id. A good example of this is a `profile` resource. The profile resource always looks up the currently logged-in user. We do not need to have the user id as a part of the url path. The singular `resource` is useful here. Example:
 
@@ -126,7 +126,7 @@ edit_profile | edit_profile_path
 
 There are no arguments for any of the generated helper methods. They are not needed. Also notice, there is no index action route.
 
-## 4. Nested Resources
+## 5. Nested Resources
 
 Nesting resources are supported. Example:
 
@@ -180,7 +180,7 @@ edit_post_comment | edit_post_comment_path(post_id, id)
 
 Note: When resources are nested the parent path variable names all become `:post_id`.  This is because path variable siblings must all be the same for API Gateway. More details here: [API Gateway Considerations]({% link _docs/considerations/api-gateway.md %}).
 
-## 5. Resource Members and Collections
+## 6. Resource Members and Collections
 
 Within the resources block you can use the `member` or `collection` options as a shorthand to create additional resource related routes.  Example:
 
@@ -234,7 +234,7 @@ Also results in:
 ```
 
 
-## 6. Namespace
+## 7. Namespace
 
 Namespacing is also supported.  Unlike nested resources, namespaces do not manage or create any **resource**. For example, there's no `:admin_id` variable. Namespacing is useful for organizing code. Example:
 
@@ -270,7 +270,7 @@ Namespacing affects:
 
 The `namespace` method uses a more general `scope` method. `namespace` is a `scope` declaration with the `as`, `prefix`, and `module` options set to the `namespace` value.
 
-## 7. Scope
+## 8. Scope
 
 Scope is the more general method in the routes DSL. You can use it to set the `as`, `prefix`, and `module`. Some examples to help explain:
 
@@ -334,7 +334,7 @@ Results in:
 
 Only the controller module is affected.
 
-## 8. Helper Host
+## 9. Helper Host
 
 The named routes `_url` methods, will infer the hostname that the request came from as part of the request by default.  If you need to configure it explicitly, then you can with `config.helpers.host`. Example:
 
