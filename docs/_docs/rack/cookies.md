@@ -1,6 +1,6 @@
 ---
 title: Cookies
-nav_order: 38
+nav_order: 39
 ---
 
 You can set cookies with the `cookies` helper.  Example:

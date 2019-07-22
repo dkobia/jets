@@ -1,6 +1,6 @@
 ---
 title: Email Sending
-nav_order: 50
+nav_order: 51
 ---
 
 Jets supports sending emails via ActionMailer.

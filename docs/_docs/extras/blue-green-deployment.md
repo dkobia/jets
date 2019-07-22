@@ -1,6 +1,6 @@
 ---
 title: Blue-Green Deployment
-nav_order: 72
+nav_order: 73
 ---
 
 ## Background
