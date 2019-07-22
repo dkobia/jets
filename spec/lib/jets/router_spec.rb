@@ -892,6 +892,40 @@ EOL
         expect(app.admin_profile_path).to eq("/admin/profile")
         expect(app.edit_admin_profile_path).to eq("/admin/profile/edit")
       end
+
+      it "member and collection" do
+        router.draw do
+          resource :profile do
+            get "photo", on: :member
+            get "comments", on: :collection
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++------------------+--------+------------------+-------------------+
+|        As        |  Verb  |       Path       | Controller#action |
++------------------+--------+------------------+-------------------+
+| new_profile      | GET    | profile/new      | profiles#new      |
+| profile          | GET    | profile          | profiles#show     |
+|                  | POST   | profile          | profiles#create   |
+| edit_profile     | GET    | profile/edit     | profiles#edit     |
+|                  | PUT    | profile          | profiles#update   |
+|                  | POST   | profile          | profiles#update   |
+|                  | PATCH  | profile          | profiles#update   |
+|                  | DELETE | profile          | profiles#delete   |
+| photo_profile    | GET    | profile/photo    | profile#photo     |
+| comments_profile | GET    | profile/comments | profile#comments  |
++------------------+--------+------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_profile_path).to eq("/profile/new")
+        expect(app.profile_path).to eq("/profile")
+        expect(app.edit_profile_path).to eq("/profile/edit")
+        expect(app.photo_profile_path).to eq("/profile/photo")
+        expect(app.comments_profile_path).to eq("/profile/comments")
+      end
     end
 
     context "resources direct options" do
