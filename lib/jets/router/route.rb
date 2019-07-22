@@ -26,21 +26,28 @@ class Jets::Router
       # Also, this helps to keep the method creator logic more simple.
       #
       prefix = @scope.full_prefix
-      if @options[:from_scope]
-        if @options[:singular_resource]
-          prefix = prefix.split('/')[0..-2].join('/')
-        else
-          prefix = prefix.split('/')[0..-3].join('/')
-        end
-      end
+      prefix = account_scope(prefix)
+      prefix = account_on(prefix)
 
-      case @options[:on]
-      when :collection
+      [prefix, @options[:path]].compact.join('/')
+    end
+
+    def account_scope(prefix)
+      return unless prefix
+      return prefix unless @options[:from_scope]
+
+      if @options[:singular_resource]
+        prefix.split('/')[0..-2].join('/')
+      else
+        prefix.split('/')[0..-3].join('/')
+      end
+    end
+
+    def account_on(prefix)
+      if @options[:on] == :collection && @scope.from == :resources
         prefix = prefix.split('/')[0..-2].join('/')
       end
-
-      prefix = nil if prefix == ''
-      [prefix, @options[:path]].compact.join('/')
+      prefix == '' ? nil : prefix
     end
 
     def compute_to

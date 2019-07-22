@@ -43,7 +43,7 @@ module Jets
     def infer_to_option!(options)
       return if options[:to]
 
-      path = options[:path]
+      path = options[:path].to_s
       return unless path.include?('/')
 
       items = path.split('/')
@@ -53,7 +53,10 @@ module Jets
     end
 
     def handle_on!(options)
-      options[:on] = @on_option if @on_option
+      if options[:on] && !%w[resources resource].include?(@scope.from.to_s)
+        raise "ERROR: The `on:` option can only be used within a resource or resources block"
+      end
+      options[:on] ||= @on_option if @on_option
     end
 
     def api_mode?

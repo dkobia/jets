@@ -1392,6 +1392,157 @@ EOL
       end
     end
 
+
+    context "singular resource" do
+      it "member and collection" do
+        router.draw do
+          resources :accounts, only: [] do
+            get :photo, on: :member
+            get :comments, on: :collection
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------------------+------+----------------------------+-------------------+
+|        As         | Verb |            Path            | Controller#action |
++-------------------+------+----------------------------+-------------------+
+| photo_account     | GET  | accounts/:account_id/photo | accounts#photo    |
+| comments_accounts | GET  | accounts/comments          | accounts#comments |
++-------------------+------+----------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.photo_account_path(1)).to eq("/accounts/1/photo")
+        expect(app.comments_accounts_path).to eq("/accounts/comments")
+      end
+    end
+
+    context "nested resources" do
+      it "singular to plural" do
+        router.draw do
+          resource :account do
+            resources :api_keys
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++----------------------+--------+---------------------------+-------------------+
+|          As          |  Verb  |           Path            | Controller#action |
++----------------------+--------+---------------------------+-------------------+
+| new_account          | GET    | account/new               | accounts#new      |
+| account              | GET    | account                   | accounts#show     |
+|                      | POST   | account                   | accounts#create   |
+| edit_account         | GET    | account/edit              | accounts#edit     |
+|                      | PUT    | account                   | accounts#update   |
+|                      | POST   | account                   | accounts#update   |
+|                      | PATCH  | account                   | accounts#update   |
+|                      | DELETE | account                   | accounts#delete   |
+| account_api_keys     | GET    | account/api_keys          | api_keys#index    |
+| new_account_api_key  | GET    | account/api_keys/new      | api_keys#new      |
+| account_api_key      | GET    | account/api_keys/:id      | api_keys#show     |
+|                      | POST   | account/api_keys          | api_keys#create   |
+| edit_account_api_key | GET    | account/api_keys/:id/edit | api_keys#edit     |
+|                      | PUT    | account/api_keys/:id      | api_keys#update   |
+|                      | POST   | account/api_keys/:id      | api_keys#update   |
+|                      | PATCH  | account/api_keys/:id      | api_keys#update   |
+|                      | DELETE | account/api_keys/:id      | api_keys#delete   |
++----------------------+--------+---------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_account_path).to eq("/account/new")
+        expect(app.account_path).to eq("/account")
+        expect(app.edit_account_path).to eq("/account/edit")
+
+        expect(app.account_api_keys_path).to eq("/account/api_keys")
+        expect(app.new_account_api_key_path).to eq("/account/api_keys/new")
+        expect(app.account_api_key_path(1)).to eq("/account/api_keys/1")
+        expect(app.edit_account_api_key_path(1)).to eq("/account/api_keys/1/edit")
+      end
+
+      it "plural to singular" do
+        router.draw do
+          resources :books do
+            resource :cover
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-----------------+--------+---------------------------+-------------------+
+|       As        |  Verb  |           Path            | Controller#action |
++-----------------+--------+---------------------------+-------------------+
+| books           | GET    | books                     | books#index       |
+| new_book        | GET    | books/new                 | books#new         |
+| book            | GET    | books/:book_id            | books#show        |
+|                 | POST   | books                     | books#create      |
+| edit_book       | GET    | books/:book_id/edit       | books#edit        |
+|                 | PUT    | books/:book_id            | books#update      |
+|                 | POST   | books/:book_id            | books#update      |
+|                 | PATCH  | books/:book_id            | books#update      |
+|                 | DELETE | books/:book_id            | books#delete      |
+| new_book_cover  | GET    | books/:book_id/cover/new  | covers#new        |
+| book_cover      | GET    | books/:book_id/cover      | covers#show       |
+|                 | POST   | books/:book_id/cover      | covers#create     |
+| edit_book_cover | GET    | books/:book_id/cover/edit | covers#edit       |
+|                 | PUT    | books/:book_id/cover      | covers#update     |
+|                 | POST   | books/:book_id/cover      | covers#update     |
+|                 | PATCH  | books/:book_id/cover      | covers#update     |
+|                 | DELETE | books/:book_id/cover      | covers#delete     |
++-----------------+--------+---------------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.books_path).to eq("/books")
+        expect(app.new_book_path).to eq("/books/new")
+        expect(app.book_path(1)).to eq("/books/1")
+        expect(app.edit_book_path(1)).to eq("/books/1/edit")
+
+        expect(app.new_book_cover_path(1)).to eq("/books/1/cover/new")
+        expect(app.book_cover_path(1)).to eq("/books/1/cover")
+        expect(app.edit_book_cover_path(1)).to eq("/books/1/cover/edit")
+      end
+
+      it "singular to singular" do
+        router.draw do
+          resource :account do
+            resource :avatar
+          end
+        end
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++---------------------+--------+---------------------+-------------------+
+|         As          |  Verb  |        Path         | Controller#action |
++---------------------+--------+---------------------+-------------------+
+| new_account         | GET    | account/new         | accounts#new      |
+| account             | GET    | account             | accounts#show     |
+|                     | POST   | account             | accounts#create   |
+| edit_account        | GET    | account/edit        | accounts#edit     |
+|                     | PUT    | account             | accounts#update   |
+|                     | POST   | account             | accounts#update   |
+|                     | PATCH  | account             | accounts#update   |
+|                     | DELETE | account             | accounts#delete   |
+| new_account_avatar  | GET    | account/avatar/new  | avatars#new       |
+| account_avatar      | GET    | account/avatar      | avatars#show      |
+|                     | POST   | account/avatar      | avatars#create    |
+| edit_account_avatar | GET    | account/avatar/edit | avatars#edit      |
+|                     | PUT    | account/avatar      | avatars#update    |
+|                     | POST   | account/avatar      | avatars#update    |
+|                     | PATCH  | account/avatar      | avatars#update    |
+|                     | DELETE | account/avatar      | avatars#delete    |
++---------------------+--------+---------------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.new_account_path).to eq("/account/new")
+        expect(app.account_path).to eq("/account")
+        expect(app.edit_account_path).to eq("/account/edit")
+
+        expect(app.new_account_avatar_path).to eq("/account/avatar/new")
+        expect(app.account_avatar_path).to eq("/account/avatar")
+        expect(app.edit_account_avatar_path).to eq("/account/avatar/edit")
+      end
+    end
+
     ########################
     # useful for debugging
     context "debugging" do
@@ -1400,7 +1551,7 @@ EOL
           resources :posts, param: :my_post_id
         end
         output = Jets::Router.help(router.routes).to_s
-        puts output
+        # puts output
         # expect(app.post_comments_path(1)).to eq("/posts/1/comments")
       end
     end
