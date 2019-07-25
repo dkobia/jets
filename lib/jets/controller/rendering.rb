@@ -34,7 +34,7 @@ class Jets::Controller
 
     def adjust_content_type!(options)
       if options.key?(:json)
-        options[:content_type] = "application/json"
+        options[:content_type] = "application/json;charset=utf-8"
       elsif options.key?(:xml)
         options[:content_type] = "application/xml"
       end
