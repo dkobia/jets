@@ -18,6 +18,14 @@ class Jets::Controller
       def skip_forgery_protection(options = {})
         skip_before_action :verify_authenticity_token, options
       end
+
+      def forgery_protection_enabled?
+        # Example:
+        #
+        #    before_actions [[:verify_authenticity_token, {}], [:set_post, {:only=>[:show, :edit, :update, :delete]}
+        #
+        before_actions.map { |a| a[0] }.include?(:verify_authenticity_token)
+      end
     end
 
     # Instance methods

@@ -23,7 +23,8 @@ module Jets::UrlHelper
   end
 
   def token_tag(token = nil, form_options: {})
-    # return '' unless @jets_controller.protect_against_forgery? # TODO: protect_against_forgery?
+    enabled = @_jets[:controller].class.forgery_protection_enabled?
+    return '' unless enabled
 
     token = masked_authenticity_token
     session[:authenticity_token] = token
