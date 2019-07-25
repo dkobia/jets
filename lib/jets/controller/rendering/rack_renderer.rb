@@ -137,7 +137,9 @@ module Jets::Controller::Rendering
 
     def jets_internal_variables
       {
-        jets_controller: @controller
+        _jets: {
+          controller: @controller
+        }
       }
     end
 
