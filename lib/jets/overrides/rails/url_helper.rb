@@ -71,7 +71,7 @@ module Jets::UrlHelper
   end
 
   def masked_authenticity_token
-    SecureRandom.hex(32)
+    @masked_authenticity_token ||= SecureRandom.hex(32)
   end
 end # UrlHelper
 
