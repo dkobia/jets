@@ -30,7 +30,7 @@ module Jets::Controller::Middleware
     # Common setup logical at this point of middleware processing right before
     # calling any controller actions.
     def setup
-      # We already recreated a mimicke rack env earlier as part of the very first
+      # We already recreated a mimick rack env earlier as part of the very first
       # middleware layer. However, by the time the rack env reaches the main middleware
       # it could had been updated by other middlewares. We update the env here again.
       @controller.request.set_env!(@env)

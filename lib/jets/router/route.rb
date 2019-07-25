@@ -44,6 +44,7 @@ class Jets::Router
     end
 
     def account_on(prefix)
+      # Tricky @scope.from == :resources since the account_scope already has accounted for it
       if @options[:on] == :collection && @scope.from == :resources
         prefix = prefix.split('/')[0..-2].join('/')
       end

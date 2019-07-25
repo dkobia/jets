@@ -22,6 +22,18 @@ module Jets::UrlHelper
     add_stage_name(url)
   end
 
+  def token_tag(token = nil, form_options: {})
+    # return '' unless @jets_controller.protect_against_forgery? # TODO: protect_against_forgery?
+
+    token = masked_authenticity_token
+    session[:authenticity_token] = token
+    hidden_field_tag 'authenticity_token', token
+  end
+
+  def masked_authenticity_token
+    SecureRandom.hex(32)
+  end
+
   def _handle_model(record)
     model = record.to_model
     if model.persisted?

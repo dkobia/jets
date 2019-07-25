@@ -11,6 +11,7 @@ class Jets::Controller
     include Rendering
     include ActiveSupport::Rescuable
     include Jets::Router::Helpers
+    include ForgeryProtection
 
     delegate :headers, to: :request
     delegate :set_header, to: :response

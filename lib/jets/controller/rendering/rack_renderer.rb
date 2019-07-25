@@ -110,7 +110,7 @@ module Jets::Controller::Rendering
     end
 
     def render_options
-      # nomralize the template option
+      # normalize the template option
       template = @options[:template]
       if template and !template.include?('/')
         template = "#{template_namespace}/#{template}"
@@ -119,11 +119,13 @@ module Jets::Controller::Rendering
       # ready to override @options[:template]
       @options[:template] = template if @options[:template]
 
+      assigns = controller_instance_variables.merge(jets_internal_variables)
+
       render_options = {
         template: template, # weird: template needs to be set no matter because it
           # sets the name which is used in lookup_context.rb:209:in `normalize_name'
         layout: @options[:layout],
-        assigns: controller_instance_variables,
+        assigns: assigns,
       }
       types = %w[json inline plain file xml body action].map(&:to_sym)
       types.each do |type|
@@ -131,6 +133,12 @@ module Jets::Controller::Rendering
       end
 
       render_options
+    end
+
+    def jets_internal_variables
+      {
+        jets_controller: @controller
+      }
     end
 
     def controller_instance_variables
