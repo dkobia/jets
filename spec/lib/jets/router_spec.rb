@@ -722,6 +722,15 @@ EOL
         expect(app.preview_post_path(1)).to eq("/posts/1/preview")
         expect(app.list_posts_path).to eq("/posts/list")
       end
+
+      it "no parent resources block" do
+        expect {
+          router.draw do
+            get "preview", on: :member
+            get "list", on: :collection
+          end
+        }.to raise_error(Jets::Router::Error)
+      end
     end
 
     context "namespace" do

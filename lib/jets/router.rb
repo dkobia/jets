@@ -54,7 +54,7 @@ module Jets
 
     def handle_on!(options)
       if options[:on] && !%w[resources resource].include?(@scope.from.to_s)
-        raise "ERROR: The `on:` option can only be used within a resource or resources block"
+        raise Error.new("ERROR: The `on:` option can only be used within a resource or resources block")
       end
       options[:on] ||= @on_option if @on_option
     end
