@@ -1667,7 +1667,7 @@ EOL
     context "debugging" do
       it "debug2" do
         router.draw do
-          resources :posts, param: :my_post_id
+          resources :posts, controller: "articles"
         end
         output = Jets::Router.help(router.routes).to_s
         # puts output

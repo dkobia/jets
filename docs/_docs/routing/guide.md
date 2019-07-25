@@ -105,6 +105,102 @@ Resources supports several options: module, prefix, as, controller.
 * as: changes the name of the generated helper methods
 * controller: changes controller that it maps to
 
+**module example:**
+
+```ruby
+resources :posts, module: "admin"
+```
+
+Results in:
+
+```
++-----------+--------+----------------+--------------------+
+|    As     |  Verb  |      Path      | Controller#action  |
++-----------+--------+----------------+--------------------+
+| posts     | GET    | posts          | admin/posts#index  |
+| new_post  | GET    | posts/new      | admin/posts#new    |
+| post      | GET    | posts/:id      | admin/posts#show   |
+|           | POST   | posts          | admin/posts#create |
+| edit_post | GET    | posts/:id/edit | admin/posts#edit   |
+|           | PUT    | posts/:id      | admin/posts#update |
+|           | POST   | posts/:id      | admin/posts#update |
+|           | PATCH  | posts/:id      | admin/posts#update |
+|           | DELETE | posts/:id      | admin/posts#delete |
++-----------+--------+----------------+--------------------+
+```
+
+**prefix example:**
+
+```ruby
+resources :posts, prefix: "v1"
+```
+
+Results in:
+
+```
++-----------+--------+-------------------+-------------------+
+|    As     |  Verb  |       Path        | Controller#action |
++-----------+--------+-------------------+-------------------+
+| posts     | GET    | v1/posts          | posts#index       |
+| new_post  | GET    | v1/posts/new      | posts#new         |
+| post      | GET    | v1/posts/:id      | posts#show        |
+|           | POST   | v1/posts          | posts#create      |
+| edit_post | GET    | v1/posts/:id/edit | posts#edit        |
+|           | PUT    | v1/posts/:id      | posts#update      |
+|           | POST   | v1/posts/:id      | posts#update      |
+|           | PATCH  | v1/posts/:id      | posts#update      |
+|           | DELETE | v1/posts/:id      | posts#delete      |
++-----------+--------+-------------------+-------------------+
+```
+
+**as example:**
+
+```ruby
+resources :posts, as: "articles"
+```
+
+Results in:
+
+```
++--------------+--------+----------------+-------------------+
+|      As      |  Verb  |      Path      | Controller#action |
++--------------+--------+----------------+-------------------+
+| articles     | GET    | posts          | posts#index       |
+| new_article  | GET    | posts/new      | posts#new         |
+| article      | GET    | posts/:id      | posts#show        |
+|              | POST   | posts          | posts#create      |
+| edit_article | GET    | posts/:id/edit | posts#edit        |
+|              | PUT    | posts/:id      | posts#update      |
+|              | POST   | posts/:id      | posts#update      |
+|              | PATCH  | posts/:id      | posts#update      |
+|              | DELETE | posts/:id      | posts#delete      |
++--------------+--------+----------------+-------------------+
+```
+
+**controller example:**
+
+```ruby
+resources :posts, controller: "articles"
+```
+
+Results in:
+
+```
++-----------+--------+----------------+-------------------+
+|    As     |  Verb  |      Path      | Controller#action |
++-----------+--------+----------------+-------------------+
+| posts     | GET    | posts          | articles#index    |
+| new_post  | GET    | posts/new      | articles#new      |
+| post      | GET    | posts/:id      | articles#show     |
+|           | POST   | posts          | articles#create   |
+| edit_post | GET    | posts/:id/edit | articles#edit     |
+|           | PUT    | posts/:id      | articles#update   |
+|           | POST   | posts/:id      | articles#update   |
+|           | PATCH  | posts/:id      | articles#update   |
+|           | DELETE | posts/:id      | articles#delete   |
++-----------+--------+----------------+-------------------+
+```
+
 The options can be provided directly to `resources` method. You may also want to look at using the `scope`, `prefix` which can provide similar results with less duplication by making use of blocks.  The `scope` and `prefix` docs are below.
 
 ### 2.3 param identifier
