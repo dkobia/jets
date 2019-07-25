@@ -852,6 +852,29 @@ EOL
         expect(app.v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2")
         expect(app.edit_v1_admin_post_comment_path(1,2)).to eq("/v1/admin/posts/1/comments/2/edit")
       end
+
+      it "regular create route methods" do
+        router.draw do
+          namespace "admin" do
+            get "posts", to: "posts#index"
+            get "posts/:id", to: "posts#show"
+          end
+        end
+
+        output = Jets::Router.help(router.routes).to_s
+        table =<<EOL
++-------------+------+-----------------+-------------------+
+|     As      | Verb |      Path       | Controller#action |
++-------------+------+-----------------+-------------------+
+| admin_posts | GET  | admin/posts     | admin/posts#index |
+| admin_post  | GET  | admin/posts/:id | admin/posts#show  |
++-------------+------+-----------------+-------------------+
+EOL
+        expect(output).to eq(table)
+
+        expect(app.admin_posts_path).to eq("/admin/posts")
+        expect(app.admin_post_path(1)).to eq("/admin/posts/1")
+      end
     end
 
     context "prefix" do
