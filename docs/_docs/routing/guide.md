@@ -469,6 +469,7 @@ The named routes `_url` methods, will infer the hostname from the request by def
 ```ruby
 Jets.application.configure do
   config.helpers.host = "http://example.com:8888" # default is nil, which means it'll be inferred from the request
+end
 ```
 
 {% include prev_next.md %}
