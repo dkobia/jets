@@ -39,9 +39,7 @@ class Jets::Resource::ApiGateway::RestApi::Routes
 
     def variable_collision_exists?(parent, paths)
       paths = paths_with_variables(paths)
-      # puts "paths #{paths}".color(:yellow)
       variables = parent_variables(parent, paths)
-      # puts "variables #{variables}".color(:yellow)
       collide = variables.uniq.size > 1
       register_collision(parent, variables) if collide
       collide
