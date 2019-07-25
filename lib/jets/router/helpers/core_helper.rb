@@ -5,8 +5,13 @@ module Jets::Router::Helpers
       url_for(record)
     end
 
-    def session
-      @_jets[:controller].session
+    # override helper delegates to point to jets controller
+    # TODO: params is weird
+    CONTROLLER_DELEGATES = %w[session response headers]
+    CONTROLLER_DELEGATES.each do |meth|
+      define_method meth do
+        @_jets[:controller].send(meth)
+      end
     end
   end
 end

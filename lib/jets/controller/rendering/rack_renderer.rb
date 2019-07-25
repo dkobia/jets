@@ -119,13 +119,11 @@ module Jets::Controller::Rendering
       # ready to override @options[:template]
       @options[:template] = template if @options[:template]
 
-      assigns = controller_instance_variables.merge(jets_internal_variables)
-
       render_options = {
         template: template, # weird: template needs to be set no matter because it
           # sets the name which is used in lookup_context.rb:209:in `normalize_name'
         layout: @options[:layout],
-        assigns: assigns,
+        assigns: controller_instance_variables,
       }
       types = %w[json inline plain file xml body action].map(&:to_sym)
       types.each do |type|
@@ -135,14 +133,7 @@ module Jets::Controller::Rendering
       render_options
     end
 
-    def jets_internal_variables
-      {
-        _jets: {
-          controller: @controller
-        }
-      }
-    end
-
+    # Pass controller instance variables from jets-based controller to ActionView scope
     def controller_instance_variables
       instance_vars = @controller.instance_variables.inject({}) do |vars, v|
         k = v.to_s.sub(/^@/,'') # @var => var
@@ -150,6 +141,9 @@ module Jets::Controller::Rendering
         vars
       end
       instance_vars[:event] = event
+      # jets internal variables
+      # So ActionView has access back to the jets controller
+      instance_vars[:_jets] = { controller: @controller }
       instance_vars
     end
 

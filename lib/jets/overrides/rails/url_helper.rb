@@ -22,19 +22,6 @@ module Jets::UrlHelper
     add_stage_name(url)
   end
 
-  def token_tag(token = nil, form_options: {})
-    enabled = @_jets[:controller].class.forgery_protection_enabled?
-    return '' unless enabled
-
-    token = masked_authenticity_token
-    session[:authenticity_token] = token
-    hidden_field_tag 'authenticity_token', token
-  end
-
-  def masked_authenticity_token
-    SecureRandom.hex(32)
-  end
-
   def _handle_model(record)
     model = record.to_model
     if model.persisted?
@@ -71,6 +58,20 @@ module Jets::UrlHelper
     # post_comment_path(post_id) - keep all args - for update
     # post_comments_path - drop last arg - for create
     send(meth, *args)
+  end
+
+  # for forgery protection
+  def token_tag(token = nil, form_options: {})
+    enabled = @_jets[:controller].class.forgery_protection_enabled?
+    return '' unless enabled
+
+    token = masked_authenticity_token
+    session[:authenticity_token] = token
+    hidden_field_tag 'authenticity_token', token
+  end
+
+  def masked_authenticity_token
+    SecureRandom.hex(32)
   end
 end # UrlHelper
 
